@@ -33,11 +33,21 @@
         <h2 class="text-center">Schedule for Dr. {{ $doctor->name }}</h2>
         <p class="text-center text-muted">Specialty: {{ $doctor->Specialty }}</p>
 
-        <!-- Schedule Creation Form -->
+        <!-- Error Messages -->
+        @if ($errors->any())
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
         <div class="card mb-4">
             <div class="card-header text-center">Create a Weekly Schedule</div>
             <div class="card-body">
-                <form action="{{ route('doctor.schedule.store', $doctor->Doc_id) }}" method="POST">
+                <form id="scheduleForm" action="{{ route('doctor.schedule.store', $doctor->Doc_id) }}" method="POST">
                     @csrf
                     <div class="mb-3">
                         <label class="form-label">Select Days</label>
@@ -46,8 +56,7 @@
                                 <div class="day-button" data-day="{{ $day }}">{{ $day }}</div>
                             @endforeach
                         </div>
-                        <!-- Hidden inputs for multiple selected days -->
-                        <div id="days-container"></div>
+                        <div id="dateFields"></div>
                         <small class="form-text text-muted">Click on the days to select them.</small>
                     </div>
                     <div class="row">
@@ -65,7 +74,6 @@
             </div>
         </div>
 
-        <!-- Existing Schedules -->
         <div class="card">
             <div class="card-header text-center">Weekly Schedules</div>
             <div class="card-body">
@@ -108,7 +116,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const dayButtons = document.querySelectorAll('.day-button');
-            const daysContainer = document.getElementById('days-container');
+            const dateFieldsContainer = document.getElementById('dateFields');
             const selectedDays = new Set();
 
             dayButtons.forEach(button => {
@@ -117,31 +125,34 @@
                     if (selectedDays.has(day)) {
                         selectedDays.delete(day);
                         button.classList.remove('selected');
-                        removeDayInput(day);
                     } else {
                         selectedDays.add(day);
                         button.classList.add('selected');
-                        addDayInput(day);
                     }
+                    generateDates();
                 });
             });
 
-            function addDayInput(day) {
-                if (!document.getElementById(`day-${day}`)) {
-                    const input = document.createElement('input');
-                    input.type = 'hidden';
-                    input.name = 'days[]';
-                    input.value = day;
-                    input.id = `day-${day}`;
-                    daysContainer.appendChild(input);
-                }
-            }
+            function generateDates() {
+                dateFieldsContainer.innerHTML = "";
+                let today = new Date();
+                let endDate = new Date();
+                endDate.setDate(today.getDate() + 14); // Next two weeks
 
-            function removeDayInput(day) {
-                const input = document.getElementById(`day-${day}`);
-                if (input) {
-                    input.remove();
-                }
+                selectedDays.forEach(day => {
+                    let tempDate = new Date(today);
+                    while (tempDate <= endDate) {
+                        if (tempDate.toLocaleDateString('en-US', { weekday: 'long' }) === day) {
+                            let formattedDate = tempDate.toLocaleDateString('en-GB').replace(/\//g, '.'); // Convert to DD.MM.YYYY
+                            let input = document.createElement("input");
+                            input.type = "hidden";
+                            input.name = "dates[]";
+                            input.value = formattedDate;
+                            dateFieldsContainer.appendChild(input);
+                        }
+                        tempDate.setDate(tempDate.getDate() + 1);
+                    }
+                });
             }
         });
     </script>

@@ -29,62 +29,91 @@ class DoctorScheduleController extends Controller
      */
     public function store(Request $request, $Doc_id)
     {
-        // Validate the input
         $request->validate([
-            'days' => 'required|array|distinct',
-            'days.*' => 'in:Monday,Tuesday,Wednesday,Thursday,Friday,Saturday,Sunday',
+            'dates' => 'required|array|min:1',
+            'dates.*' => 'regex:/^\d{2}\.\d{2}\.\d{4}$/', // Validate DD.MM.YYYY format
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
         ]);
-    
-        $days = $request->days;
+
         $startTime = $request->start_time;
         $endTime = $request->end_time;
-    
+        $duplicateDates = [];
         $today = Carbon::today();
-        $endDate = $today->copy()->addWeeks(2);
-    
-        // ** Step 1: Refill Logic **
-        $this->refillSchedules($Doc_id, $today, $startTime, $endTime);
-    
-        // ** Step 2: Create New Schedules **
-        foreach ($days as $day) {
-            // Generate dates for the selected day within the two-week period
-            $dates = CarbonPeriod::create($today, $endDate)
-                ->filterByDays([$day]);
-    
-            foreach ($dates as $date) {
-                // Check if the schedule already exists
-                DoctorSchedule::firstOrCreate([
+
+        // **Step 1: Delete old schedules that are already finished**
+        $this->deleteOldSchedules($Doc_id, $today);
+
+        foreach ($request->dates as $formattedDate) {
+            // Convert DD.MM.YYYY to YYYY-MM-DD
+            $date = Carbon::createFromFormat('d.m.Y', $formattedDate)->format('Y-m-d');
+
+            // Check if schedule already exists for this doctor on this date
+            $existingSchedule = DoctorSchedule::where('Doc_id', $Doc_id)
+                ->where('date', $date)
+                ->exists();
+
+            if ($existingSchedule) {
+                $duplicateDates[] = $formattedDate; // Store duplicates for error message
+            } else {
+                DoctorSchedule::create([
                     'Doc_id' => $Doc_id,
-                    'date' => $date->toDateString(),
+                    'date' => $date,
                     'start_time' => $startTime,
                     'end_time' => $endTime,
                 ]);
             }
         }
-    
-        return redirect()->back()->with('success', 'Schedules created and refilled successfully!');
+
+        // **Step 2: Auto refill past schedules**
+        $this->refillSchedules($Doc_id, $today, $startTime, $endTime);
+
+        // If duplicates were found, return an error message
+        if (!empty($duplicateDates)) {
+            return redirect()->back()->withErrors([
+                'error' => 'The following dates already exist for this doctor: ' . implode(', ', $duplicateDates),
+            ])->withInput();
+        }
+
+        return redirect()->back()->with('success', 'Schedules created successfully!');
     }
-    
+
+    /**
+     * Deletes old schedules (schedules that have passed).
+     */
+    private function deleteOldSchedules($Doc_id, $today)
+    {
+        DoctorSchedule::where('Doc_id', $Doc_id)
+            ->where('date', '<', $today)
+            ->delete();
+    }
+
+    /**
+     * Automatically refill expired schedules by adding new ones two weeks ahead.
+     */
     private function refillSchedules($Doc_id, $today, $startTime, $endTime)
     {
         // Get all expired schedules (past schedules)
         $expiredSchedules = DoctorSchedule::where('Doc_id', $Doc_id)
             ->where('date', '<', $today)
             ->get();
-    
+
         foreach ($expiredSchedules as $schedule) {
             // Calculate the new date two weeks ahead of the expired schedule
             $nextDate = Carbon::parse($schedule->date)->addWeeks(2);
-    
+
+            // Ensure the new schedule falls on the same weekday
+            if ($nextDate->format('l') !== Carbon::parse($schedule->date)->format('l')) {
+                continue;
+            }
+
             // Check if the schedule already exists for the new date
             $existingSchedule = DoctorSchedule::where('Doc_id', $Doc_id)
                 ->where('date', $nextDate->toDateString())
-                ->where('start_time', $startTime)
-                ->where('end_time', $endTime)
+                ->where('start_time', $schedule->start_time)
+                ->where('end_time', $schedule->end_time)
                 ->exists();
-    
+
             // Create the new schedule if it doesn't exist
             if (!$existingSchedule) {
                 DoctorSchedule::create([
@@ -96,17 +125,13 @@ class DoctorScheduleController extends Controller
             }
         }
     }
-    
 
     /**
      * Delete a schedule by a specific day.
      */
     public function destroyByDay($date)
     {
-        // Delete schedules matching the given date
         DoctorSchedule::where('date', $date)->delete();
-
         return redirect()->back()->with('success', 'Schedules for ' . $date . ' deleted successfully!');
     }
 }
-    
