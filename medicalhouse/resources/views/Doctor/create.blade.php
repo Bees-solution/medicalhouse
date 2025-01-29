@@ -94,7 +94,27 @@
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="Specialty" class="form-label">Specialty</label>
-                        <input type="text" name="Specialty" id="Specialty" class="form-control" placeholder="Enter specialty" required>
+                        <select name="Specialty" id="Specialty" class="form-select" required onchange="toggleOtherSpecialty()">
+                            <option value="">Select Specialty</option>
+                            <option value="Cardiologist">Cardiologist</option>
+                            <option value="Chest Physician / Pulmonologist">Chest Physician / Pulmonologist</option>
+                            <option value="Dental Surgeon">Dental Surgeon</option>
+                            <option value="Dermatologist">Dermatologist</option>
+                            <option value="Diabetologist & Endocrinologist">Diabetologist & Endocrinologist</option>
+                            <option value="ENT Surgeon / Otorhinolaryngologist">ENT Surgeon / Otorhinolaryngologist</option>
+                            <option value="General Surgeon">General Surgeon</option>
+                            <option value="Gynaecologist & Obstetrician">Gynaecologist & Obstetrician</option>
+                            <option value="Neurosurgeon">Neurosurgeon</option>
+                            <option value="Orthodontist">Orthodontist</option>
+                            <option value="Orthopaedic Surgeon">Orthopaedic Surgeon</option>
+                            <option value="Paediatrician">Paediatrician</option>
+                            <option value="Psychiatrist">Psychiatrist</option>
+                            <option value="Rheumatologist">Rheumatologist</option>
+                            <option value="Sports & Exercise Medicine Physician">Sports & Exercise Medicine Physician</option>
+                            <option value="Visiting Physician">Visiting Physician</option>
+                            <option value="Other">Other (Specify Below)</option>
+                        </select>
+                        <input type="text" name="OtherSpecialty" id="OtherSpecialty" class="form-control mt-2" placeholder="Enter specialty" style="display: none;">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="Qualification" class="form-label">Qualification</label>
@@ -130,6 +150,21 @@
         </form>
     </div>
 
+    <script>
+        function toggleOtherSpecialty() {
+            var specialtyDropdown = document.getElementById("Specialty");
+            var otherSpecialtyInput = document.getElementById("OtherSpecialty");
+            if (specialtyDropdown.value === "Other") {
+                otherSpecialtyInput.style.display = "block";
+                otherSpecialtyInput.setAttribute("required", "true");
+            } else {
+                otherSpecialtyInput.style.display = "none";
+                otherSpecialtyInput.removeAttribute("required");
+            }
+        }
+    </script>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+    
