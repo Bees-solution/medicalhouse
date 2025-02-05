@@ -134,4 +134,15 @@ class DoctorScheduleController extends Controller
         DoctorSchedule::where('date', $date)->delete();
         return redirect()->back()->with('success', 'Schedules for ' . $date . ' deleted successfully!');
     }
+
+    // Controller Method
+public function getSchedulesByDoctor(Request $request)
+{
+    $request->validate(['doctor_id' => 'required|integer']);
+    $schedules = DoctorSchedule::where('Doc_id', $request->doctor_id)
+        ->whereBetween('date', [now(), now()->addWeeks(2)])
+        ->get(['date', 'start_time', 'end_time']);
+    return response()->json($schedules);
+}
+
 }

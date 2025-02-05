@@ -116,5 +116,20 @@ class DoctorController extends Controller
 
         return redirect()->route('doctor.index')->with('success', 'Doctor deleted successfully.');
     }
+
+
+public function getDoctorsBySpecialty(Request $request)
+    {
+        // Validate the request to ensure 'specialty' is present
+        $request->validate([
+            'specialty' => 'required|string',
+        ]);
+
+        // Fetch doctors with the selected specialty
+        $doctors = Doctor::where('Specialty', $request->specialty)->get(['Doc_id', 'name']);
+
+        // Return the doctors as JSON
+        return response()->json($doctors);
+    }
     
 }
