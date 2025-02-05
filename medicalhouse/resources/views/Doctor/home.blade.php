@@ -106,8 +106,11 @@
                             <td>
                                 @if ($doctor->schedules->isNotEmpty())
                                     <ul class="schedule-list">
-                                        @foreach ($doctor->schedules as $schedule)
-                                            <li>{{ \Carbon\Carbon::parse($schedule->available_date)->format('l') }}: {{ $schedule->start_time }} - {{ $schedule->end_time }}</li>
+                                        @foreach ($doctor->schedules->sortBy('date') as $schedule) <!-- Fix: Ensures all schedules show -->
+                                            <li>
+                                                {{ \Carbon\Carbon::parse($schedule->date)->format('l, d M Y') }}: 
+                                                {{ $schedule->start_time }} - {{ $schedule->end_time }}
+                                            </li>
                                         @endforeach
                                     </ul>
                                 @else
