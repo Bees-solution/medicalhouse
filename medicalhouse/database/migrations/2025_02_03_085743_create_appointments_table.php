@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->unsignedInteger('appointment_no');
 
             // Appointment Type
-            $table->enum('appointment_status', ['Online', 'On Counter']); // Booking type
+            $table->enum('appointment_status', ['Online', 'Offline']); // Booking type
 
             // Patient Details
             $table->foreignId('patient_id')->nullable()->constrained('patients')->onDelete('set null');
