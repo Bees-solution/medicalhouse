@@ -110,14 +110,25 @@ class DoctorScheduleController extends Controller
     }
 
     // Controller Method
+
 public function getSchedulesByDoctor(Request $request)
 {
     $request->validate(['doctor_id' => 'required|integer']);
+
+    // Get today's date and two weeks ahead
+    $today = now()->startOfDay(); 
+    $twoWeeksLater = now()->addWeeks(2)->endOfDay();
+
+    // Fetch schedules between today and two weeks forward
     $schedules = DoctorSchedule::where('Doc_id', $request->doctor_id)
-        ->whereBetween('date', [now(), now()->addWeeks(2)])
+        ->whereBetween('date', [$today, $twoWeeksLater])
+        ->orderBy('date')
+        ->orderBy('start_time') // Ensures proper chronological order
         ->get(['date', 'start_time', 'end_time']);
+
     return response()->json($schedules);
 }
+
 
 }
     
