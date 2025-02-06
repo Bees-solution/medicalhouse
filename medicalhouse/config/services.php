@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'notifylk' => [
+    'api_key' => env('NOTIFYLK_API_KEY'),
+    'user_id' => env('NOTIFYLK_USER_ID'),
+    'sender_id' => env('NOTIFYLK_SENDER_ID'),
+    ],
+
 ];
