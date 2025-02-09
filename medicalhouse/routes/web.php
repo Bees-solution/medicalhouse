@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminAppointmentViewController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DoctorController;
 use App\Http\Controllers\DoctorListController;
@@ -21,6 +22,9 @@ Route::get('doctor/{Doc_id}/schedule/create', [DoctorScheduleController::class, 
 Route::post('doctor/{Doc_id}/schedule/store', [DoctorScheduleController::class, 'store'])->name('doctor.schedule.store');
 Route::delete('schedule/{date}/destroy', [DoctorScheduleController::class, 'destroyByDay'])->name('doctor.schedule.destroy');
 
+//admin appointment view 
+Route::get('/adminview', [AdminAppointmentViewController::class, 'index'])->name('admin.index');
+Route::get('/admin/doctor/{doc_id}/appointments', [AdminAppointmentViewController::class, 'showDoctorAppointments'])->name('doctor.appointments');
 
 Route::get('/', function () {
     return view('welcome');
