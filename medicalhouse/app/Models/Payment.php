@@ -10,16 +10,22 @@ class Payment extends Model
     use HasFactory;
 
     protected $fillable = [
-        'method',
+        'appointment_id',
         'amount',
-        'total',
-        'doc_id',
-        'remarks'
+        'payment_method',
+        'payment_date',
+        'status'
     ];
 
-    // Relationship with Doctor
-    public function doctor()
+    // Relationship: A Payment belongs to an Appointment
+    public function appointment()
     {
-        return $this->belongsTo(Doctor::class, 'doc_id', 'Doc_id');
+        return $this->belongsTo(Appointment::class);
+    }
+
+    // Relationship: A Payment has one Bill
+    public function bill()
+    {
+        return $this->hasOne(Bill::class);
     }
 }
