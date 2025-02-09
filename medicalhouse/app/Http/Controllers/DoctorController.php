@@ -131,4 +131,26 @@ public function getDoctorsBySpecialty(Request $request)
         // Return the doctors as JSON
         return response()->json($doctors);
     }
+
+    public function getDoctorFee(Request $request)
+    {
+        // ✅ Validate request
+        if (!isset($request->doctor_id) || empty($request->doctor_id)) {
+            return response()->json(['error' => 'Doctor ID is required.'], 400);
+        }
+
+        // ✅ Fetch doctor using `Doc_id`
+        $doctor = Doctor::where('Doc_id', $request->doctor_id)->first();
+
+        if (!$doctor) {
+            return response()->json(['error' => 'Doctor not found.'], 404);
+        }
+
+        // ✅ Return doctor details
+        return response()->json([
+            'name' => $doctor->name,
+            'specialty' => $doctor->Specialty,
+            'fee' => $doctor->Fee
+        ]);
+    }
 }
