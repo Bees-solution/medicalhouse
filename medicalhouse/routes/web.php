@@ -66,4 +66,7 @@ Route::get('/get-doctor-fee', [DoctorController::class, 'getDoctorFee']);
 Route::post('/process-pay-now', [AppointmentController::class, 'processPayNowAppointment']);
 Route::get('/download-bill/{billNo}', [AppointmentController::class, 'downloadBill']);
 
+Route::get('/aboutus', function () {
+    return view('aboutus');
+});
 
