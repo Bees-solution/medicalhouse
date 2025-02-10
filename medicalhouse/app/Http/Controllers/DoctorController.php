@@ -153,4 +153,5 @@ public function getDoctorsBySpecialty(Request $request)
             'fee' => $doctor->Fee
         ]);
     }
+    
 }
