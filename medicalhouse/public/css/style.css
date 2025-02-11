@@ -1,0 +1,450 @@
+/* ✅ General Reset (Fix White Space Issue) */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    width: 100%;
+    overflow-x: hidden; /* Fixes white space issue */
+    font-family: 'Poppins', sans-serif;
+    background-color: #f8faff;
+}
+
+/* ✅ Fix White Space for Images & Containers */
+img, .container, .top-header, .nav-menu {
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+/* ✅ Top Header */
+.top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background: white;
+    color: #5a8cb7;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+/* ✅ Mobile Responsiveness for Header */
+@media (max-width: 768px) {
+    .top-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 10px;
+    }
+
+    .left, .right {
+        margin-bottom: 10px;
+    }
+}
+
+/* ✅ Contact & Email Styling */
+.subtext {
+    font-size: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #a5c3d9;
+}
+
+.contact, .email {
+    font-size: 18px;
+    font-weight: bold;
+    color: #2a6799;
+}
+
+/* ✅ Center Section (Logo & Clinic Name) */
+.center {
+    text-align: center;
+}
+
+.logo {
+    height: 50px;
+}
+
+.clinic-name {
+    font-size: 22px;
+    font-weight: bold;
+    color: #6990b0;
+}
+
+/* Default Navigation Bar */
+.nav-menu {
+    position: relative; /* Normal position until scroll */
+    width: 100%;
+    background: #1883a7;
+    display: flex;
+    justify-content: center;
+    padding: 15px 0;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+    z-index: 9999;
+}
+
+/* Sticky Navbar when Scrolling */
+.nav-menu.sticky {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #1883a7;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+
+/* Mobile Menu Button */
+.mobile-menu-btn {
+    display: none;
+    background: #007bff;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+}
+
+/* Responsive Nav */
+@media (max-width: 768px) {
+    .nav-menu {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: #1883a7;
+        position: absolute;
+        top: 60px;
+        left: 0;
+    }
+
+    .nav-menu.open {
+        display: flex;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+        position: fixed;
+        top: 15px;
+        right: 20px;
+        z-index: 10000;
+    }
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: 0.3s;
+}
+
+.nav-menu a:hover {
+    color: #ffcc00;
+}
+
+/* Floating "Book an Appointment" Button */
+.floating-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #007bff;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: width 0.3s ease-in-out, border-radius 0.3s ease-in-out;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    white-space: nowrap;
+    gap: 8px;
+    padding: 0px;
+}
+
+/* Icon Styling - Always Visible */
+.floating-btn .icon {
+    font-size: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+/* Initially Hide Text */
+.floating-btn .text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease-in-out, width 0.3s ease-in-out;
+    font-size: 16px;
+    white-space: nowrap;
+}
+
+/* Expand on Hover */
+.floating-btn:hover {
+    width: 230px; /* Adjusted to fit full text */
+    border-radius: 40px; /* Keeps rounded edges */
+    justify-content: center;
+}
+
+/* Show Text when Hovered */
+.floating-btn:hover .text {
+    opacity: 1;
+    width: auto;
+}
+
+/* ✅ Fix Hero Section */
+.carousel-container {
+    width: 100%;
+    height: 90vh;
+    overflow: hidden;
+    position: relative;
+    margin-top: 0;
+}
+
+.carousel img {
+    width: 100%;
+    height: 90vh;
+    object-fit: cover;
+}
+
+.carousel-overlay {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 40px;
+    border-radius: 10px;
+}
+
+.carousel-overlay h1 {
+    font-size: 42px;
+    font-weight: bold;
+}
+
+.carousel-overlay p {
+    font-size: 18px;
+    margin-top: 10px;
+}
+
+/* Footer Styling */
+.footer {
+    background: linear-gradient(to right, #0b3c66, #1e4a7b, #3572a8, #4a92d6); /* Blue Gradient Background */
+    color: white;
+    padding: 30px 50px;
+}
+
+/* Footer Layout */
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Left Section: Logo & Copyright */
+.footer-left {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.footer-logo {
+    max-width: 120px; /* Adjust logo size */
+    margin-bottom: 10px;
+}
+
+.hospital-name {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.copyright {
+    font-size: 14px;
+    opacity: 0.8;
+}
+
+/* Right Section: Quick Links */
+.footer-right h3 {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+.footer-right ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-right ul li {
+    margin-bottom: 5px;
+}
+
+.footer-right ul li a {
+    text-decoration: none;
+    color: white;
+    opacity: 0.9;
+    transition: 0.3s;
+}
+
+.footer-right ul li a:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .footer-container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .footer-left,
+    .footer-right {
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+    }
+}
+
+
+/* login css */
+.login-body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url('/images/loginback.jpg') no-repeat center center;
+    background-size: cover;
+    font-family: 'Poppins', sans-serif;
+    color: #fff;
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.login-container {
+    background: rgba(255, 255, 255, 0.34);
+    border-radius: 12px;
+    backdrop-filter: blur(15px);
+    padding: 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    text-align: center;
+}
+
+.login-container h1 {
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: bold;
+    color: black;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    text-align: left;
+    font-size: 14px;
+    font-weight: normal;
+    color: rgba(22, 22, 22, 0.8);
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 8px;
+    background: transparent;
+    color: #fff;
+    font-size: 16px;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+.form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.form-group input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.8);
+}
+
+.input-group-text {
+    background: transparent;
+    border: none;
+    color: #fff;
+}
+
+.remember-forgot {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.remember-forgot a {
+    color: #fff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+.btn-login {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #6a11cb, #2575fc);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.9s;
+}
+
+.btn-login:hover {
+    background: linear-gradient(90deg, #2575fc, #6a11cb);
+}
+
+.form-control {
+    background: transparent !important;  /* Ensures full transparency */
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    color: #fff !important;  /* Makes text white for visibility */
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-control::placeholder {
+    color: rgba(255, 255, 255, 0.7);  /* Light text for placeholder */
+}
+
+.form-control:focus {
+    background: transparent !important;  /* Stays transparent on focus */
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: none;  /* Removes any unwanted Bootstrap shadows */
+}
+
+.input-group-text {
+    background: transparent !important;
+    border: none;
+    color: #fff !important;
+}

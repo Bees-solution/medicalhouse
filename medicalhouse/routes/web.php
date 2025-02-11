@@ -7,6 +7,7 @@ use App\Http\Controllers\DoctorListController;
 use App\Http\Controllers\DoctorScheduleController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\OTPController;
+use App\Http\Controllers\LabController;
 
 Route::resource('doctor', DoctorController::class);
 
@@ -31,7 +32,7 @@ Route::get('/adminview', [AdminAppointmentViewController::class, 'index'])->name
 Route::get('/admin/doctor/{doc_id}/appointments', [AdminAppointmentViewController::class, 'showDoctorAppointments'])->name('doctor.appointments');
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('homepage');
 });
 // Appointment  online pay later
 Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
@@ -72,3 +73,20 @@ Route::get('/aboutus', function () {
     return view('aboutus');
 });
 
+//admin routes
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+});
+
+Route::get('/admin/login', function () {
+    return view('admin.login');
+})->name('admin.login');
+
+//Laboratory Routes
+Route::get('/lab', [LabController::class, 'index'])->name('lab.index');
+Route::get('/lab/create', [LabController::class, 'create'])->name('lab.create');
+Route::get('/lab/{labTest}', [LabController::class, 'show'])->name('lab.show');
+Route::get('/lab/{labTest}/edit', [LabController::class, 'edit'])->name('lab.edit');
+Route::post('/lab/store', [LabController::class, 'store'])->name('lab.store');
+Route::put('/lab/{labTest}', [LabController::class, 'update'])->name('lab.update');
+Route::delete('/lab/{labTest}', [LabController::class, 'destroy'])->name('lab.destroy');
