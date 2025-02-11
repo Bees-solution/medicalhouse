@@ -11,10 +11,13 @@
     <!-- FontAwesome for Icons -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
 
+    <!-- Google Font: Source Code Pro -->
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600&display=swap" rel="stylesheet">
+
     <style>
         body {
             background-color: #f4f7fc;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Source Code Pro', monospace;
         }
         .container {
             max-width: 900px;
@@ -125,7 +128,7 @@
                             <li class="list-group-item">
                                 <div class="doctor-info">
                                     <i class="fas fa-user-md text-success"></i>
-                                    <a href="{{ route('doctor.appointments', ['doc_id' => $firstSchedule->doctor->Doc_id]) }}" class="doctor-name ms-2">
+                                    <a href="#" class="doctor-name ms-2">
                                         Dr. {{ $firstSchedule->doctor->name ?? 'Unknown' }}
                                     </a>
                                 </div>

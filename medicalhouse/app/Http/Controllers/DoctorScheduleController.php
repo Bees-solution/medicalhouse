@@ -27,8 +27,15 @@ class DoctorScheduleController extends Controller
     /**
      * Store the schedule for the doctor for the next 2 weeks.
      */
-    public function store(Request $request, $Doc_id)
+        public function store(Request $request, $Doc_id)
     {
+        // Ensure the Doctor ID is valid
+        $doctor = Doctor::find($Doc_id);
+        if (!$doctor) {
+            return redirect()->back()->withErrors(['error' => 'Doctor not found.']);
+        }
+
+        // Validate request data
         $request->validate([
             'dates' => 'required|array|min:1',
             'dates.*' => 'regex:/^\d{2}\.\d{2}\.\d{4}$/', // Validate DD.MM.YYYY format
@@ -40,120 +47,128 @@ class DoctorScheduleController extends Controller
         $endTime = $request->end_time;
         $duplicateDates = [];
         $today = Carbon::today();
+        $selectedWeekdays = [];
 
-        // **Step 1: Delete old schedules that are already finished**
-        $this->deleteOldSchedules($Doc_id, $today);
+        // **Step 1: Delete old schedules**
+        $this->deleteOldSchedules($today);
 
+        // **Step 2: Store the selected schedules**
         foreach ($request->dates as $formattedDate) {
-            // Convert DD.MM.YYYY to YYYY-MM-DD
-            $date = Carbon::createFromFormat('d.m.Y', $formattedDate)->format('Y-m-d');
+            $date = Carbon::createFromFormat('d.m.Y', $formattedDate);
+            $dayOfWeek = $date->dayOfWeek; // Get weekday (0=Sunday, 1=Monday, ..., 6=Saturday)
 
-            // Check if schedule already exists for this doctor on this date
+            // Store selected weekdays for auto-filling
+            if (!in_array($dayOfWeek, $selectedWeekdays)) {
+                $selectedWeekdays[] = $dayOfWeek;
+            }
+
+            // **Check if schedule already exists before inserting**
             $existingSchedule = DoctorSchedule::where('Doc_id', $Doc_id)
-                ->where('date', $date)
+                ->where('date', $date->format('Y-m-d'))
+                ->where('start_time', $startTime)
+                ->where('end_time', $endTime)
                 ->exists();
 
             if ($existingSchedule) {
-                $duplicateDates[] = $formattedDate; // Store duplicates for error message
+                $duplicateDates[] = $formattedDate;
             } else {
                 DoctorSchedule::create([
                     'Doc_id' => $Doc_id,
-                    'date' => $date,
+                    'date' => $date->format('Y-m-d'),
                     'start_time' => $startTime,
                     'end_time' => $endTime,
                 ]);
             }
         }
 
-        // **Step 2: Auto refill past schedules**
-        $this->refillSchedules($Doc_id, $today, $startTime, $endTime);
+        // **Step 3: Auto-fill missing schedules based on selected weekdays**
+        $this->autoFillSchedules($Doc_id, $startTime, $endTime, $selectedWeekdays);
 
-        // If duplicates were found, return an error message
         if (!empty($duplicateDates)) {
             return redirect()->back()->withErrors([
-                'error' => 'The following dates already exist for this doctor: ' . implode(', ', $duplicateDates),
+                'error' => 'The following dates already exist: ' . implode(', ', $duplicateDates),
             ])->withInput();
         }
 
         return redirect()->back()->with('success', 'Schedules created successfully!');
     }
 
+
     /**
-     * Deletes old schedules (schedules that have passed).
+     * Deletes expired schedules (for all doctors).
      */
-    private function deleteOldSchedules($Doc_id, $today)
+    private function deleteOldSchedules($today)
     {
-        DoctorSchedule::where('Doc_id', $Doc_id)
-            ->where('date', '<', $today)
-            ->delete();
+        DoctorSchedule::whereDate('date', '<', $today)->delete();
     }
 
     /**
-     * Automatically refill expired schedules by adding new ones two weeks ahead.
+     * Automatically fills missing schedules for the next 2 weeks based on selected weekdays.
      */
-    private function refillSchedules($Doc_id, $today, $startTime, $endTime)
+    private function autoFillSchedules($Doc_id, $startTime, $endTime, $selectedWeekdays)
     {
-        // Get all expired schedules (past schedules)
-        $expiredSchedules = DoctorSchedule::where('Doc_id', $Doc_id)
-            ->where('date', '<', $today)
-            ->get();
+        $today = Carbon::today();
+        $twoWeeksLater = Carbon::today()->addWeeks(2);
 
-        foreach ($expiredSchedules as $schedule) {
-            // Calculate the new date two weeks ahead of the expired schedule
-            $nextDate = Carbon::parse($schedule->date)->addWeeks(2);
+        // Ensure the doctor exists before proceeding
+        $doctor = Doctor::find($Doc_id);
+        if (!$doctor) {
+            return;
+        }
 
-            // Ensure the new schedule falls on the same weekday
-            if ($nextDate->format('l') !== Carbon::parse($schedule->date)->format('l')) {
+        $dateRange = CarbonPeriod::create($today, $twoWeeksLater);
+
+        foreach ($dateRange as $date) {
+            $formattedDate = $date->format('Y-m-d');
+            $dayOfWeek = $date->dayOfWeek;
+
+            // Skip days that are not in the selected weekdays
+            if (!in_array($dayOfWeek, $selectedWeekdays)) {
                 continue;
             }
 
-            // Check if the schedule already exists for the new date
+            // Check if schedule already exists for that day
             $existingSchedule = DoctorSchedule::where('Doc_id', $Doc_id)
-                ->where('date', $nextDate->toDateString())
-                ->where('start_time', $schedule->start_time)
-                ->where('end_time', $schedule->end_time)
+                ->where('date', $formattedDate)
                 ->exists();
 
-            // Create the new schedule if it doesn't exist
+            // If no schedule exists, create a new one
             if (!$existingSchedule) {
                 DoctorSchedule::create([
                     'Doc_id' => $Doc_id,
-                    'date' => $nextDate->toDateString(),
-                    'start_time' => $schedule->start_time,
-                    'end_time' => $schedule->end_time,
+                    'date' => $formattedDate,
+                    'start_time' => $startTime,
+                    'end_time' => $endTime,
                 ]);
             }
         }
     }
 
     /**
-     * Delete a schedule by a specific day.
+     * Delete schedules by a specific day.
      */
     public function destroyByDay($date)
     {
-        DoctorSchedule::where('date', $date)->delete();
+        DoctorSchedule::whereDate('date', $date)->delete();
         return redirect()->back()->with('success', 'Schedules for ' . $date . ' deleted successfully!');
     }
 
-    // Controller Method
+    /**
+     * Fetch schedules for a doctor within the next two weeks.
+     */
+    public function getSchedulesByDoctor(Request $request)
+    {
+        $request->validate(['doctor_id' => 'required|integer']);
 
-public function getSchedulesByDoctor(Request $request)
-{
-    $request->validate(['doctor_id' => 'required|integer']);
+        $today = now()->startOfDay();
+        $twoWeeksLater = now()->addWeeks(2)->endOfDay();
 
-    // Get today's date and two weeks ahead
-    $today = now()->startOfDay(); 
-    $twoWeeksLater = now()->addWeeks(2)->endOfDay();
+        $schedules = DoctorSchedule::where('Doc_id', $request->doctor_id)
+            ->whereBetween('date', [$today, $twoWeeksLater])
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->get(['date', 'start_time', 'end_time']);
 
-    // Fetch schedules between today and two weeks forward
-    $schedules = DoctorSchedule::where('Doc_id', $request->doctor_id)
-        ->whereBetween('date', [$today, $twoWeeksLater])
-        ->orderBy('date')
-        ->orderBy('start_time') // Ensures proper chronological order
-        ->get(['date', 'start_time', 'end_time']);
-
-    return response()->json($schedules);
-}
-
-
+        return response()->json($schedules);
+    }
 }

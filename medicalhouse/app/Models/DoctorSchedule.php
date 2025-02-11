@@ -11,12 +11,10 @@ class DoctorSchedule extends Model
 
     protected $table = 'doctor_schedules';
 
-   
-    protected $primaryKey = ['Doc_id', 'date', 'start_time', 'end_time'];
-
+    protected $primaryKey = null; // Fix composite key issue
     public $incrementing = false;
-
-    public $timestamps = true;
+    protected $keyType = 'string';
+    public $timestamps = false; // Disable timestamps
 
     protected $fillable = [
         'Doc_id',
@@ -24,8 +22,6 @@ class DoctorSchedule extends Model
         'start_time',
         'end_time',
     ];
-
-    protected $keyType = 'string';
 
     public function doctor()
     {
