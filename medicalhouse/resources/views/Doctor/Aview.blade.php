@@ -128,9 +128,9 @@
                             <li class="list-group-item">
                                 <div class="doctor-info">
                                     <i class="fas fa-user-md text-success"></i>
-                                    <a href="#" class="doctor-name ms-2">
-                                        Dr. {{ $firstSchedule->doctor->name ?? 'Unknown' }}
-                                    </a>
+                                    <a href="{{ route('appointments.upcoming', ['doctor_id' => $doctor->Doc_id]) }}" class="btn btn-primary">
+                                            View Upcoming Appointments
+                                        </a>
                                 </div>
                                 <span class="badge bg-warning text-dark">
                                     <i class="far fa-calendar"></i>

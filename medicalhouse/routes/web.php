@@ -72,3 +72,22 @@ Route::get('/aboutus', function () {
     return view('aboutus');
 });
 
+//admin routes
+Route::get('/admin/dashboard', function () {
+    return view('admin.dashboard');
+});
+
+Route::get('/admin/login', function () {
+    return view('admin.login');
+})->name('admin.login');
+
+//Laboratory Routes
+Route::get('/lab', [LabController::class, 'index'])->name('lab.index');
+Route::get('/lab/create', [LabController::class, 'create'])->name('lab.create');
+Route::get('/lab/{labTest}', [LabController::class, 'show'])->name('lab.show');
+Route::get('/lab/{labTest}/edit', [LabController::class, 'edit'])->name('lab.edit');
+Route::post('/lab/store', [LabController::class, 'store'])->name('lab.store');
+Route::put('/lab/{labTest}', [LabController::class, 'update'])->name('lab.update');
+Route::delete('/lab/{labTest}', [LabController::class, 'destroy'])->name('lab.destroy');
+//Upcoming appointment view
+Route::get('/appointments/upcoming/{doctor_id}', [AdminAppointmentViewController::class, 'upcoming'])->name('appointments.upcoming');
