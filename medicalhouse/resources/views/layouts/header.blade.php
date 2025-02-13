@@ -26,9 +26,9 @@
 <nav id="mobileMenu" class="nav-menu">
     <a href="{{ url('/') }}">Home</a>
     <a href="{{ url('/pharmacy') }}">Pharmacy</a>
-    <a href="{{ url('/channeling') }}">Channeling</a>
+    <a href="{{ url('/doctorlist') }}">Channeling</a>
     <a href="{{ url('/laboratory') }}">Laboratory</a>
-    <a href="{{ url('/about') }}">About Us</a>
+    <a href="{{ url('/aboutus') }}">About Us</a>
     <a href="{{ url('/contact') }}">Contact Us</a>
 </nav>
 

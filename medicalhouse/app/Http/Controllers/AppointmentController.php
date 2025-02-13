@@ -22,6 +22,13 @@ class AppointmentController extends Controller
         return view('appointments.create', compact('specialties'));
     }
 
+    public function homepage()
+{
+    $specialties = Doctor::select('Specialty')->distinct()->pluck('Specialty');
+
+    return view('homepage', compact('specialties'));
+}
+
     public function createOfflineAppointment()
 {
     // Fetch distinct specialties from the doctors table
