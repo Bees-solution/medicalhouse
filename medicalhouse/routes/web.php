@@ -7,6 +7,7 @@ use App\Http\Controllers\DoctorListController;
 use App\Http\Controllers\DoctorScheduleController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\OTPController;
+use App\Http\Controllers\LabController;
 
 Route::resource('doctor', DoctorController::class);
 
@@ -30,9 +31,9 @@ Route::delete('/schedules/delete-old', [DoctorScheduleController::class, 'delete
 Route::get('/adminview', [AdminAppointmentViewController::class, 'index'])->name('admin.index');
 Route::get('/admin/doctor/{doc_id}/appointments', [AdminAppointmentViewController::class, 'showDoctorAppointments'])->name('doctor.appointments');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+
+Route::get('/', [AppointmentController::class, 'homepage'])->name('homepage');
 // Appointment  online pay later
 Route::get('/appointments/create', [AppointmentController::class, 'create'])->name('appointments.create');
 Route::post('/appointments', [AppointmentController::class, 'store'])->name('appointments.store');
