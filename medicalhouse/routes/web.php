@@ -51,9 +51,10 @@ Route::post('/appointments/process-payment', [AppointmentController::class, 'pro
 Route::get('/appointment-success/{appointment}', [AppointmentController::class, 'appointmentSuccess'])
     ->name('appointment.success');
 
-
+// fetching this to the appoinment form
 Route::get('/get-doctors', [DoctorController::class, 'getDoctorsBySpecialty']);
 Route::get('/get-schedules', [DoctorScheduleController::class, 'getSchedulesByDoctor']);
+Route::get('/get-doctor-schedules/{doctorId}', [DoctorScheduleController::class, 'getSchedules']);
 
 Route::post('/send-otp', [OTPController::class, 'sendOtp']);
 Route::post('/verifythe-otp', [OTPController::class, 'verifyOtp']);
@@ -68,6 +69,8 @@ Route::get('/get-doctor-fee', [DoctorController::class, 'getDoctorFee']);
 
 Route::post('/process-pay-now', [AppointmentController::class, 'processPayNowAppointment']);
 Route::get('/download-bill/{billNo}', [AppointmentController::class, 'downloadBill']);
+
+
 
 Route::get('/aboutus', function () {
     return view('aboutus');
