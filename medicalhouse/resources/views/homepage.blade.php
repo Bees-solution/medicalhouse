@@ -9,6 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book an Appointment</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         .af-body-container {
             display: flex;
@@ -166,6 +167,144 @@
                 max-width: 100%;
             }
         }
+
+/* 🔹 Specialties Main Container */
+.specialties-main {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1300px;
+    margin: auto;
+    padding: 40px 20px;
+}
+
+/* 🔹 Left Image */
+.specialty-image {
+    width: 450px;
+    height: auto;
+    border-radius: 12px;
+    object-fit: cover;
+    box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
+}
+
+.specialties-container {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* Ensure 5 equal columns */
+    gap: 20px;
+    max-width: 800px;
+    overflow: visible; /* 👈 FIXED (Previously set to "hidden") */
+    max-height: 470px; /* Ensures only 3 rows are visible */
+    transition: max-height 0.4s ease-in-out;
+    justify-content: center;
+}
+
+/* 🔹 Specialty Cards (Prevent Moving Effect) */
+.specialty-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+    text-align: center;
+    width: 140px; /* Fixed width */
+    height: 140px; /* Fixed height */
+    position: relative;  /* Ensure it stays in place */
+}
+
+/* 🔹 Specialty Icons */
+.specialty-icon {
+    font-size: 2rem;
+    color: #007bff; /* Primary blue */
+    margin-bottom: 10px;
+    transition: color 0.3s ease-in-out, transform 0.3s ease-in-out;
+}
+
+/* 🔹 Specialty Text */
+.specialty-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: #444;
+    text-align: center;
+    transition: color 0.3s ease-in-out;
+}
+
+/* 🔹 Hover Effect Without Breaking Layout */
+.specialty-card:hover {
+    transform: scale(1.05); /* Slight enlargement */
+    background-color: #007bff;
+    box-shadow: 0px 12px 24px rgba(0, 123, 255, 0.3);
+    z-index: 10; /* Keeps it above other elements */
+}
+
+
+/* 🔹 Hover Effect on Text & Icon */
+.specialty-card:hover .specialty-text,
+.specialty-card:hover .specialty-icon {
+    color: white;
+}
+
+/* 🔹 View All Button */
+.view-all-btn {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    color: #007bff;
+    margin-top: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease-in-out;
+}
+
+.view-all-btn:hover {
+    color: #0056b3;
+}
+
+/* 🔹 Expand Full Grid on Click */
+.specialties-container.expanded {
+    max-height: 1000px; /* Expands to show all */
+}
+
+/* 🔹 Responsive Adjustments */
+@media (max-width: 1200px) {
+    .specialties-container {
+        grid-template-columns: repeat(4, 1fr); /* 4 columns on medium screens */
+    }
+}
+
+@media (max-width: 992px) {
+    .specialties-main {
+        flex-direction: column;
+        text-align: center;
+        gap: 30px;
+    }
+
+    .specialty-image {
+        width: 90%;
+        max-width: 500px;
+    }
+
+    .specialties-container {
+        grid-template-columns: repeat(3, 1fr); /* 3 columns on tablets */
+    }
+}
+
+@media (max-width: 768px) {
+    .specialties-container {
+        grid-template-columns: repeat(2, 1fr); /* 2 columns on smaller screens */
+    }
+}
+
+@media (max-width: 480px) {
+    .specialties-container {
+        grid-template-columns: repeat(1, 1fr); /* 1 column on mobile */
+    }
+}
+
+
     </style>
 
     <!-- Hero Section (Carousel) -->
@@ -278,6 +417,50 @@
                 </div>
             </div>
         </section>
+
+        
+
+<!-- 🔹 Specialties Section -->
+<div class="specialties-main">
+    <!-- Left Side Image -->
+    <img src="{{ asset('images/specialties/docbg2.jpg') }}" alt="Doctor Consultation" class="specialty-image">
+
+    <!-- Right Side Specialties Grid -->
+    <div>
+        <div class="specialties-container" id="specialtiesGrid">
+        @foreach ([
+    'Visiting Physician' => 'fa-user-doctor',
+    'Cardiologist' => 'fa-heart-pulse',
+    'Chest Physician / Pulmonologist' => 'fa-lungs',
+    'Dental Surgeon' => 'fa-tooth',
+    'Dermatologist' => 'fa-user-md',
+    'Diabetologist & Endocrinologist' => 'fa-syringe',
+    'ENT Surgeon / Otorhinolaryngologist' => 'fa-ear-listen',
+    'General Surgeon' => 'fa-user-doctor',
+    'Gynaecologist & Obstetrician' => 'fa-baby',
+    'Neurosurgeon' => 'fa-brain',
+    'Orthodontist' => 'fa-teeth',
+    'Orthopaedic Surgeon' => 'fa-bone',
+    'Paediatrician' => 'fa-child',
+    'Psychiatrist' => 'fa-user-injured',
+    'Rheumatologist' => 'fa-hand-dots',
+    'Sports & Exercise Medicine Physician' => 'fa-dumbbell'
+    
+] as $specialty => $icon)
+    <div class="specialty-card" onclick="window.location='{{ route('customer.doctorsBySpecialty', ['specialty' => $specialty]) }}'">
+        <i class="fa-solid {{ $icon }} specialty-icon"></i> <!-- Icon Here -->
+        <span class="specialty-text">{{ $specialty }}</span>
+    </div>
+@endforeach
+
+        </div>
+
+        <!-- View All Button -->
+        <div class="view-all-btn" onclick="toggleSpecialties()">
+            View All
+        </div>
+    </div>
+</div>
 
 
         <section class="relative flex items-center min-h-screen bg-gradient-to-r from-white to-blue-100 py-12">
@@ -525,6 +708,18 @@ function formatTime(timeStr) {
             document.body.style.paddingTop = "0px";
         }
     });
+
+    function toggleSpecialties() {
+            const grid = document.getElementById("specialtiesGrid");
+            if (grid.classList.contains("expanded")) {
+                grid.classList.remove("expanded");
+                document.querySelector(".view-all-btn").innerText = "View All";
+            } else {
+                grid.classList.add("expanded");
+                document.querySelector(".view-all-btn").innerText = "Show Less";
+            }
+        }
+        
 
     
 </script>

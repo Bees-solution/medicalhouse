@@ -171,4 +171,20 @@ class DoctorScheduleController extends Controller
 
         return response()->json($schedules);
     }
+
+
+
+    public function getSchedules($doctorId)
+    {
+        // Fetch schedules for the given doctor
+        $schedules = DoctorSchedule::where('doctor_id', $doctorId)->get(['id', 'date', 'time']);
+
+        // Check if there are schedules available
+        if ($schedules->isEmpty()) {
+            return response()->json(['message' => 'No schedules available'], 404);
+        }
+
+        return response()->json($schedules);
+    }
 }
+
