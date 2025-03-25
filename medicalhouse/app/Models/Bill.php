@@ -11,12 +11,23 @@ class Bill extends Model
 
     protected $fillable = [
         'payment_id',
-        'bill_date'
+        'bill_date',
+        'bill_no'
     ];
 
-    // Relationship: A Bill belongs to a Payment
+    // Auto-generate bill_no like B25485
+    protected static function booted()
+    {
+        static::creating(function ($bill) {
+            $latest = Bill::orderBy('id', 'desc')->first();
+            $lastNumber = $latest ? intval(substr($latest->bill_no, 1)) : 25480;
+            $bill->bill_no = 'B' . ($lastNumber + 1);
+        });
+    }
+
     public function payment()
     {
         return $this->belongsTo(Payment::class);
     }
 }
+

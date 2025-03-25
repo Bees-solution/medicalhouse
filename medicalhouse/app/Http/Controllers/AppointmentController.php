@@ -12,6 +12,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use App\Models\Payment; 
 use App\Models\Bill;
+use Barryvdh\DomPDF\Facade\Pdf;
+
 
 
 class AppointmentController extends Controller
@@ -166,9 +168,8 @@ class AppointmentController extends Controller
         }
     }
 
-    /**
-     * ✅ Process Offline Appointments (Pay Now & Pay Later)
-     */
+    //Offline Appointments Pay Later
+     
     public function processOfflineAppointment(Request $request)
 {
     try {
@@ -261,14 +262,14 @@ class AppointmentController extends Controller
     /**
      * ✅ Show Appointment Success Page
      */
-    public function appointmentSuccess($appointmentId)
+   /* public function appointmentSuccess($appointmentId)
     {
         $appointment = Appointment::with('doctor')->find($appointmentId);
         if (!$appointment) {
             return redirect()->route('appointments.create')->with('error', 'Appointment not found.');
         }
         return view('appointments.success', compact('appointment'));
-    }
+    }*/
 
     public function getDoctorFee(Request $request)
 {
@@ -285,7 +286,7 @@ class AppointmentController extends Controller
     ]);
 }
 
-
+//offline pay now
 public function processPayNowAppointment(Request $request)
 {
     try {
@@ -373,7 +374,7 @@ public function processPayNowAppointment(Request $request)
         return response()->json([
             'success' => true,
             'bill' => [
-                'bill_no' => $bill->id,
+                'bill_no' => $bill->bill_no,
                 'doctor_name' => $doctor->name,
                 'specialty' => $doctor->Specialty,
                 'appointment_date_time' => $appointment->appointment_date_time,
@@ -395,37 +396,32 @@ public function processPayNowAppointment(Request $request)
         return response()->json(['success' => false, 'message' => 'An error occurred: ' . $e->getMessage()]);
     }
 }
+
 public function downloadBill($billNo)
 {
-    // ✅ Fetch bill details using bill ID
-    $bill = Bill::where('id', $billNo)->first();
+    $bill = Bill::where('bill_no', $billNo)->first();
 
     if (!$bill) {
-        return response()->json(['error' => 'Bill not found'], 404);
+        return abort(404, 'Bill not found.');
     }
 
-    // ✅ Fetch related payment and appointment details
-    $payment = Payment::where('id', $bill->payment_id)->first();
-    $appointment = Appointment::where('id', $payment->appointment_id)->first();
-    $doctor = Doctor::where('Doc_id', $appointment->doctor_id)->first();
+    // Fetch payment, appointment, and doctor (if related)
+    $payment = $bill->payment;
+    $appointment = $payment?->appointment;
+    $doctor = $appointment?->doctor;
 
-    // ✅ Generate Bill Content
-    $billContent = "
-        BILL NO: {$bill->id} \n
-        Payment ID: {$payment->id} \n
-        Doctor: {$doctor->name} ({$doctor->Specialty}) \n
-        Appointment Date & Time: {$appointment->appointment_date_time} \n
-        Patient: {$appointment->patient_name} \n
-        Appointment No: {$appointment->appointment_no} \n
-        Amount Paid: $ {$payment->amount} \n
-    ";
+    $pdf = PDF::loadView('pdf.bill', [
+        'bill' => $bill,
+        'payment' => $payment,
+        'appointment' => $appointment,
+        'doctor' => $doctor
+    ]);
 
-    // ✅ Create PDF File
-    $pdf = \PDF::loadHTML(nl2br($billContent));
-
-    // ✅ Return PDF as download
-    return $pdf->download("Bill_{$bill->id}.pdf");
+    return $pdf->download("Appointment_Bill_{$billNo}.pdf");
 }
+
+
+
 
 
 }

@@ -67,11 +67,16 @@ Route::post('/verify-otp', [OTPController::class, 'verifyOtp']);
 Route::get('/verify-otp', function () {
     return view('verify_otp');
 });
+
+//offline 
 Route::get('/appointments/offline/create', [AppointmentController::class, 'createOfflineAppointment'])->name('appointments.create_appointment_off');
+
+//offline pay later
 Route::post('/process-offline-appointment', [AppointmentController::class, 'processOfflineAppointment']);
 
 Route::get('/get-doctor-fee', [DoctorController::class, 'getDoctorFee']);
 
+//offline pay now
 Route::post('/process-pay-now', [AppointmentController::class, 'processPayNowAppointment']);
 Route::get('/download-bill/{billNo}', [AppointmentController::class, 'downloadBill']);
 

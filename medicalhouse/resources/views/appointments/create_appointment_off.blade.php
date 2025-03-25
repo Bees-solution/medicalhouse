@@ -336,11 +336,20 @@ function processPayNow() {
         });
 }
 
-
 function downloadBill() {
-    const billNo = document.querySelector('#bill-content p strong').innerText;
-    window.location.href = `/download-bill/${billNo}`;
+    const billContent = document.getElementById('bill-content').innerText;
+    const match = billContent.match(/Bill No:\s*(B\d+)/i); // Only match Bxxxxxx
+
+    if (match && match[1]) {
+        const billNo = match[1];
+        window.location.href = `/download-bill/${billNo}`;
+    } else {
+        alert("Unable to find Bill Number.");
+    }
 }
+
+
+
 
 
 function finishBill() {
