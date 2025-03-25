@@ -54,10 +54,15 @@ Route::get('/appointment-success/{appointment}', [AppointmentController::class, 
 // fetching this to the appoinment form
 Route::get('/get-doctors', [DoctorController::class, 'getDoctorsBySpecialty']);
 Route::get('/get-schedules', [DoctorScheduleController::class, 'getSchedulesByDoctor']);
-Route::get('/get-doctor-schedules/{doctorId}', [DoctorScheduleController::class, 'getSchedules']);
+
 
 Route::post('/send-otp', [OTPController::class, 'sendOtp']);
-Route::post('/verifythe-otp', [OTPController::class, 'verifyOtp']);
+//Route::post('/verifythe-otp', [OTPController::class, 'verifyOtp']);
+
+
+
+Route::post('/verify-otp', [OTPController::class, 'verifyOtp']);
+
 
 Route::get('/verify-otp', function () {
     return view('verify_otp');
@@ -93,3 +98,11 @@ Route::get('/lab/{labTest}/edit', [LabController::class, 'edit'])->name('lab.edi
 Route::post('/lab/store', [LabController::class, 'store'])->name('lab.store');
 Route::put('/lab/{labTest}', [LabController::class, 'update'])->name('lab.update');
 Route::delete('/lab/{labTest}', [LabController::class, 'destroy'])->name('lab.destroy');
+
+
+
+
+// Route to fetch doctor schedules
+Route::get('/get-doctor-schedules/{doctorId}', [DoctorScheduleController::class, 'getSchedules']);
+
+Route::get('/get-doctor-fee/{doctorId}', [DoctorController::class, 'getdocfeebyID']);

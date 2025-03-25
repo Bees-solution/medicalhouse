@@ -74,16 +74,25 @@ class AppointmentController extends Controller
      * ✅ Process Online Appointments (Pay Now & Pay At Counter)
      */
     public function processOnlineAppointment(Request $request)
+
     {
+    \Log::info('Received Data:', $request->all());
+    
         try {
             DB::beginTransaction();
 
             // Retrieve appointment details from session
             $appointmentData = Session::get('verified_appointment');
+            \Log::info('Session inside processOnlineAppointment:', ['data' => $appointmentData]);
+            
             if (!$appointmentData) {
-                return redirect()->route('appointments.create')->with('error', 'Session expired. Please start again.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Session expired. Please start again.'
+                ], 400);
             }
-
+            
+            
             // Extract details
             $doctorId = $appointmentData['doctor'];
             $scheduleDetails = explode(',', $appointmentData['schedule']);
@@ -93,15 +102,20 @@ class AppointmentController extends Controller
             // Fetch doctor details
             $doctor = Doctor::find($doctorId);
             if (!$doctor) {
-                return redirect()->route('appointments.create')->with('error', 'Doctor not found.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Doctor not found.'
+                ], 404);
             }
 
             // Generate unique appointment number
             $appointmentNo = $this->generateAppointmentNumber($doctorId, $appointmentDate, $startTime);
             if (!$appointmentNo) {
-                return redirect()->route('appointments.create')->with('error', 'Could not assign appointment number. Please try again.');
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Could not assign appointment number. Please try again.'
+                ], 500);
             }
-
             // Store patient data
             $patient = Patient::updateOrCreate(
                 ['contact_no' => $appointmentData['contact']],
@@ -134,12 +148,21 @@ class AppointmentController extends Controller
             // Clear session
             Session::forget('verified_appointment');
 
-            return redirect()->route('appointment.success', ['appointment' => $appointment->id]);
+            return response()->json([
+                'success' => true,
+                'appointment_id' => $appointment->id,
+                'message' => 'Appointment booked successfully!'
+            ]);
+            
 
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Error booking online appointment:', ['error' => $e->getMessage()]);
-            return redirect()->route('appointments.create')->with('error', 'An error occurred. Please try again.');
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong. Please try again.'
+            ], 500);
+            
         }
     }
 

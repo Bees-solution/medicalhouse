@@ -11,109 +11,126 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-        .af-body-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background-color: #f9f9f9;
-            margin: 0;
-            padding: 1rem;
-        }
+      .af-body-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f9f9f9;
+    margin: 0;
+    
+}
 
-        .af-form-container {
-            background-color: #ffffff;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            max-width: 800px;
-            width: 100%;
-            position: relative;
-            overflow: hidden;
-        }
+/* Form Container */
+.af-form-container {
+    background-color: #ffffff;
+   
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    padding: 1.5rem;
+}
 
-        .af-form-container h1 {
-            text-align: center;
-            margin-bottom: 1.5rem;
-            color: #333333;
-            font-size: 1.8rem;
-        }
+/* Form Title */
+.af-form-container h1 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: #333333;
+    font-size: 1.8rem;
+}
 
-        .af-form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
+/* Grid Layout */
+.af-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
 
-        .af-form-container label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-weight: bold;
-            color: #555555;
-        }
+/* Labels & Inputs */
+.af-form-container label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: #555555;
+    margin-bottom: 0.3rem;
+}
 
-        .af-form-container input,
-        .af-form-container select {
-            width: 100%;
-            max-width: 100%;
-            padding: 0.8rem;
-            margin-bottom: 1rem;
-            border: 1px solid #dddddd;
-            border-radius: 5px;
-            font-size: 1rem;
-            box-sizing: border-box;
-        }
+.af-form-container input,
+.af-form-container select {
+    width: 100%;
+    max-width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #dddddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    box-sizing: border-box;
+}
 
-        .af-form-container select {
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            appearance: none;
-            background-color: #fff;
-            padding-right: 2rem;
-            background-image: url('data:image/svg+xml;utf8,<svg fill="%23007bff" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5.25 7.5l5 5 5-5" /></svg>');
-            background-repeat: no-repeat;
-            background-position: right 10px center;
-            background-size: 12px;
-            cursor: pointer;
-            overflow: hidden;
-        }
+/* Custom Styling for Select Dropdown */
+.af-form-container select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    padding-right: 2rem;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23007bff" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M5.25 7.5l5 5 5-5" /></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    cursor: pointer;
+    overflow: hidden;
+}
 
-        .af-form-container select:focus,
-        .af-form-container input:focus {
-            background-color: #eef7ff;
-            border-color: #007bff;
-            outline: none;
-            box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
-        }
+.af-form-container select:focus,
+.af-form-container input:focus {
+    background-color: #eef7ff;
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+}
 
-        .af-button-container {
-            display: flex;
-            justify-content: flex-end;
-            margin-top: 1.5rem;
-        }
+/* Button Styling */
+.af-button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+}
 
-        .af-button-container button {
-            background-color: #007bff;
-            color: #ffffff;
-            font-weight: bold;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            padding: 0.7rem 1.5rem;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
+.af-button-container button {
+    background-color: #007bff;
+    color: #ffffff;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+}
 
-        .af-button-container button:hover {
-            background-color: #0056b3;
-        }
-        .af-gender-container {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
+.af-button-container button:hover {
+    background-color: #0056b3;
+}
+/* Gender Selection Container */
+.af-gender-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem; /* Space between items */
+    flex-wrap: wrap;
+}
 
-        .af-gender-container input[type="radio"] {
+/* Group Each Radio Button with Its Label */
+.af-gender-container .gender-option {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem; /* Small gap between radio and label */
+}
+
+.af-gender-container input[type="radio"] {
             appearance: none;
             -webkit-appearance: none;
             width: 20px;
@@ -134,39 +151,91 @@
         .af-gender-container input[type="radio"]:hover {
             border-color: #0056b3;
         }
+/* Ensure Labels Stay Properly Aligned */
+.af-gender-container label {
+    font-size: inherit;
+    font-weight: bold;
+    color: #555555;
+    line-height: 1; /* Makes sure text stays aligned */
+    display: flex;
+    align-items: center;
+}
 
-        @media (max-width: 768px) {
-            .af-form-grid {
-                grid-template-columns: 1fr;
-            }
-            .af-button-container {
-                justify-content: center;
-            }
-            .af-form-container h1 {
-                font-size: 1.5rem;
-            }
-        }
+/* Mobile View Fix */
+@media (max-width: 480px) {
+    .af-gender-container {
+        gap: 0.8rem;
+        justify-content: flex-start;
+    }
 
-        @media (max-width: 480px) {
-            .af-body-container {
-                padding: 0.5rem;
-            }
-            .af-form-container {
-                padding: 1rem;
-                max-width: 100%;
-            }
-            .af-form-container h1 {
-                font-size: 1.2rem;
-            }
-            .af-button-container button {
-                width: 100%;
-            }
+    .af-gender-container .gender-option {
+        gap: 0.3rem;
+    }
+}
 
-            .af-form-container select {
-                width: 100%;
-                max-width: 100%;
-            }
-        }
+
+
+
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .af-form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .af-button-container {
+        justify-content: center;
+    }
+    
+    .af-form-container h1 {
+        font-size: 1.5rem;
+    }
+    .af-image-container {
+        width: 100%;
+        height: auto;
+        margin-right: 0; /* Remove any right margin */
+        padding-right: 0; /* Remove any right padding */
+    }
+
+    .af-image-container img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover; /* Fills the space properly */
+        display: block; /* Remove extra space caused by inline elements */
+    }
+    
+    
+}
+
+@media (max-width: 480px) {
+    .af-body-container {
+        padding: 0.5rem;
+    }
+    
+    .af-form-container {
+        padding: 1rem;
+        max-width: 100%;
+    }
+    
+    .af-form-container h1 {
+        font-size: 1.2rem;
+    }
+    
+    .af-button-container {
+        justify-content: center;
+    }
+
+    .af-button-container button {
+        width: 100%;
+    }
+    
+    .af-form-container select {
+        width: 100%;
+        max-width: 100%;
+    }
+    
+   
+}
 
 /* 🔹 Specialties Main Container */
 .specialties-main {
@@ -186,16 +255,15 @@
     object-fit: cover;
     box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.1);
 }
-
 .specialties-container {
-    display: grid;
-    grid-template-columns: repeat(5, 1fr); /* Ensure 5 equal columns */
+    display: flex;
+    flex-wrap: wrap;
     gap: 20px;
     max-width: 800px;
-    overflow: visible; /* 👈 FIXED (Previously set to "hidden") */
-    max-height: 470px; /* Ensures only 3 rows are visible */
+    max-height: 480px; /* 👈 Adjust this to fit exactly 3 rows */
     transition: max-height 0.4s ease-in-out;
     justify-content: center;
+    overflow: hidden; /* Keeps extra rows hidden */
 }
 
 /* 🔹 Specialty Cards (Prevent Moving Effect) */
@@ -266,6 +334,7 @@
 /* 🔹 Expand Full Grid on Click */
 .specialties-container.expanded {
     max-height: 1000px; /* Expands to show all */
+    overflow: visible; 
 }
 
 /* 🔹 Responsive Adjustments */
@@ -303,6 +372,9 @@
         grid-template-columns: repeat(1, 1fr); /* 1 column on mobile */
     }
 }
+
+
+
 
 
     </style>
@@ -462,27 +534,20 @@
     </div>
 </div>
 
+<section class="relative flex flex-col md:flex-row items-center min-h-screen bg-gradient-to-r from-white to-blue-100 py-0 px-6">
 
-        <section class="relative flex items-center min-h-screen bg-gradient-to-r from-white to-blue-100 py-12">
-            <!-- Background Image on the Right -->
-            <div class="absolute right-0 top-0 h-full w-2/5 hidden md:block">
-                <img src="images/doctor2.jpg" alt="Doctor" class="h-full w-full object-cover">
-            </div>
-        
-            <!-- Form Container Aligned to Left -->
-            <div class="w-3/5 flex justify-center">
-                <!-- Header -->
-                 
-                <div class="af-form-container">
-            <h1>Book an Appointment</h1>
+    <!-- Form Container (Left on Desktop, Below on Mobile) -->
+    <div class="w-full md:w-3/5 flex justify-center">
+        <div class="af-form-container w-full max-w-lg bg-white p-6 rounded-lg shadow-lg">
+            <h1 class="text-xl md:text-2xl font-semibold text-center mb-4">Book an Appointment</h1>
 
-            <form id="appointment-form" >
+            <form id="appointment-form" class="space-y-4">
                 @csrf
 
-                <div class="af-form-grid">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="specialty">Specialty:</label>
-                        <select name="specialty" id="specialty" required>
+                        <select name="specialty" id="specialty" required class="w-full p-2 border rounded">
                             <option value="">Select Specialty</option>
                             @foreach($specialties as $specialty)
                                 <option value="{{ $specialty }}">{{ $specialty }}</option>
@@ -490,47 +555,66 @@
                         </select>
 
                         <label for="doctor">Doctor:</label>
-                        <select name="doctor" id="doctor" required>
+                        <select name="doctor" id="doctor" required class="w-full p-2 border rounded">
                             <option value="">Select Doctor</option>
                         </select>
 
                         <label for="schedule">Available Date & Time:</label>
-                        <select name="schedule" id="schedule" required>
+                        <select name="schedule" id="schedule" required class="w-full p-2 border rounded">
                             <option value="">Select Date & Time</option>
                         </select>
                     </div>
+
                     <div>
                         <label for="patient_name">Name:</label>
-                        <input type="text" name="patient_name" id="patient_name" required>
+                        <input type="text" name="patient_name" id="patient_name" required class="w-full p-2 border rounded">
 
                         <label for="nic">NIC:</label>
-                        <input type="text" name="nic" id="nic" required>
+                        <input type="text" name="nic" id="nic" required class="w-full p-2 border rounded">
 
                         <label for="email">Email:</label>
-                        <input type="email" name="email" id="email" required pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" 
-                        title="Enter a valid email address">
+                        <input type="email" name="email" id="email" required class="w-full p-2 border rounded"
+                            pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" title="Enter a valid email address">
 
-                        <div class="af-gender-container">
-                        <label for="gender">Gender:</label>
-                        <input type="radio" name="gender" id="gender_male" value="Male" required>
-                        <label for="gender_male">Male</label>
-                        <input type="radio" name="gender" id="gender_female" value="Female" required>
-                        <label for="gender_female">Female</label>
-                        <input type="radio" name="gender" id="gender_other" value="Other" required>
-                        <label for="gender_other">Other</label>
-                        </div>
+                            <div class="af-gender-container">
+    <label>Gender:</label>
+
+    <div class="gender-option">
+        <input type="radio" name="gender" id="gender_male" value="Male" required>
+        <label for="gender_male">Male</label>
+    </div>
+
+    <div class="gender-option">
+        <input type="radio" name="gender" id="gender_female" value="Female" required>
+        <label for="gender_female">Female</label>
+    </div>
+
+    <div class="gender-option">
+        <input type="radio" name="gender" id="gender_other" value="Other" required>
+        <label for="gender_other">Other</label>
+    </div>
+</div>
+
 
                         <label for="contact">Contact Number:</label>
-                        <input type="text" name="contact" id="contact" maxlength="10" required>
+                        <input type="text" name="contact" id="contact" maxlength="10" required class="w-full p-2 border rounded">
                     </div>
                 </div>
-                <div class="af-button-container">
-                <button type="button" id="next-button">Next</button>
+
+                <div class="af-button-container flex justify-center mt-4">
+                    <button type="button" id="next-button" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600">
+                        Next
+                    </button>
                 </div>
             </form>
         </div>
-            </div>
-        </section>
+    </div>
+
+    <div class="af-image-container w-full md:w-2/5 flex justify-center md:block mt-6 md:mt-0">
+        <img src="images/doctor2.jpg" alt="Doctor" class="h-full w-full object-cover">
+        </div>
+</section>
+
         
         <section class="py-12 bg-cover bg-center relative" style="background-image: url('images/reviews-bg.jpg');">
             <!-- Dark Overlay -->

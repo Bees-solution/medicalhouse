@@ -3,42 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Doctors List</title>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    
+
     <style>
-//* Dark Overlay for Modal Background */
 .af-overlay {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: none;
-    z-index: 999;
+    background: rgba(0, 0, 0, 0.5); /* Dark transparent background */
+    z-index: 998; /* Ensure it's behind the form but above everything else */
+    display: none; /* Initially hidden */
 }
 
-/* Centered & Compact Modal */
 .af-form-container {
-    background-color: #ffffff;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    width: 90%;
-    max-width: 500px;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 1000;
-    display: none;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+    z-index: 999; /* Above the overlay */
+    display: none; /* Initially hidden */
     animation: fadeIn 0.3s ease-in-out;
-    max-height: 80vh; /* Prevents overflow on small screens */
-    overflow-y: auto;
+
 }
+
 
 /* Smooth fade-in effect */
 @keyframes fadeIn {
@@ -46,7 +43,6 @@
     to { opacity: 1; transform: translate(-50%, -50%); }
 }
 
-/* Close Button */
 .close-btn {
     position: absolute;
     top: 10px;
@@ -54,15 +50,16 @@
     background: #ff4d4d;
     color: white;
     border: none;
-    padding: 5px 10px;
+    padding: 6px 12px;
     cursor: pointer;
     border-radius: 50%;
-    font-size: 16px;
+    font-size: 18px;
     transition: 0.3s ease-in-out;
 }
 
 .close-btn:hover {
     background: #cc0000;
+    transform: scale(1.1);
 }
 
 /* Form Title */
@@ -138,7 +135,7 @@
     padding: 10px;
     border-radius: 6px;
     font-size: 1rem;
-    width: 100%;
+    width: 20%;
 }
 
 .af-button-container button:hover {
@@ -151,41 +148,41 @@
         grid-template-columns: 1fr;
     }
 }
-/* Doctor Card Styling (Clean & Modern) */
+/* Doctor Card Styling (Smaller & Compact) */
 .doctor-card {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
     background: white;
-    padding: 18px;
-    border-radius: 15px;
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+    padding: 12px; /* Reduced padding */
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
     text-align: center;
     transition: all 0.3s ease-in-out;
-    min-height: 280px; /* Ensures all cards have the same height */
+    min-height: 220px; /* Smaller card height */
     height: 100%;
     border: 1px solid #e0e0e0;
 }
 
-/* Doctor Icon (Brighter & More Visible) */
+/* Doctor Icon (Smaller Size) */
 .doctor-icon {
-    font-size: 65px;
-    color:rgb(171, 201, 233) !important; /* Ensures vibrant blue */
-    margin-bottom: 10px;
+    font-size: 50px; /* Reduced from 65px */
+    color: rgb(171, 201, 233) !important;
+    margin-bottom: 8px;
 }
 
-/* Doctor Name */
+/* Doctor Name (Smaller Font) */
 .doctor-card h4 {
-    font-size: 1.2rem;
+    font-size: 1rem; /* Reduced from 1.2rem */
     font-weight: bold;
     color: #333;
-    margin-bottom: 5px;
+    margin-bottom: 3px;
 }
 
-/* Specialty Text */
+/* Specialty Text (Smaller & Compact) */
 .doctor-card p.text-muted {
-    font-size: 0.9rem;
+    font-size: 0.8rem; /* Reduced from 0.9rem */
     color: #666;
     flex-grow: 1;
     display: flex;
@@ -193,41 +190,62 @@
     justify-content: center;
     text-align: center;
 }
-
-/* Button - Ensures It's Always at the Bottom */
+/* General Button Styling */
 .channel-now-btn {
     display: block;
     width: 100%;
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
+    padding: 8px;
     text-decoration: none;
     font-weight: bold;
-    border-radius: 8px;
+    border-radius: 6px;
     transition: all 0.3s ease-in-out;
-    font-size: 0.95rem;
-    margin-top: auto;
+    font-size: 0.85rem;
+    text-align: center;
+    color: white !important;
 }
 
-/* Button Hover Effect */
+/* Alternating Colors (Better Selector) */
+.channel-now-btn:nth-of-type(odd) {
+    background-color: #5c9ded !important; /* Soft Blue */
+}
+
+.channel-now-btn:nth-of-type(even) {
+    background-color: #007bff !important; /* Original Blue */
+}
+
+/* Specialty-based Colors (Fixed Selector) */
+.channel-now-btn[data-specialty*="Psychiatrist"] {
+    background-color: #6c757d !important; /* Soft Gray */
+}
+
+.channel-now-btn[data-specialty*="Orthopaedic"] {
+    background-color: #f4a261 !important; /* Soft Orange */
+}
+
+.channel-now-btn[data-specialty*="Pulmonologist"] {
+    background-color: #2a9d8f !important; /* Soft Green */
+}
+
+/* Hover Effect */
 .channel-now-btn:hover {
-    background-color: #0056b3;
-    transform: scale(1.05);
+    filter: brightness(1.2) !important;
+    transform: scale(1.05) !important;
 }
 
-/* Hover Effect - Makes Cards More Interactive */
+/* Hover Effect - Keeps It Interactive */
 .doctor-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-/* Ensures a Perfect Grid Layout */
+/* Adjusts Grid for Small Cards */
 @media (min-width: 1200px) {
     .col-lg-2 {
-        flex: 0 0 20%;
-        max-width: 20%;
+        flex: 0 0 18%; /* Slightly reduced width */
+        max-width: 18%;
     }
 }
+
 
 
 
@@ -259,17 +277,18 @@
                     <i class="fas fa-user-md doctor-icon"></i>
                 </div>
 
-                <h4>{{ $doctor->name }}</h4>
+                <h4>Dr. {{ $doctor->name }}</h4>
                 <p class="text-muted">{{ $doctor->Specialty }}</p>
                 
 
                 <a href="#" 
-                   class="btn btn-primary channel-now-btn" 
-                   data-doctor-name="{{ $doctor->name }}" 
-                   data-specialty="{{ $doctor->Specialty }}" 
-                   data-doctor-id="{{ $doctor->Doc_id }}">
-                   Channel Now
-                </a>
+   class="channel-now-btn" 
+   data-doctor-name="{{ $doctor->name }}" 
+   data-specialty="{{ $doctor->Specialty }}" 
+   data-doctor-id="{{ $doctor->Doc_id }}">
+   Channel Now
+</a>
+
             </div>
         </div>
     @endforeach
@@ -291,6 +310,8 @@
         <div class="af-form-grid">
             <!-- Left Column: Doctor Details -->
             <div>
+            <input type="hidden" name="doctor_id" id="doctor_id">
+
                 <label for="specialty">Specialty:</label>
                 <input type="text" id="specialty" name="specialty" readonly>
 
@@ -327,51 +348,394 @@
         </div>
 
         <div class="af-button-container">
-            <button type="submit">Book Appointment</button>
+            <button type="button" id="next-button">Next</button>
         </div>
-   
-     </form>
+    </form>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            const modal = document.getElementById('appointment-form-container');
-            const overlay = document.getElementById('overlay');
-            const closeModal = document.getElementById('close-btn');
+    <!-- Hidden input to store doctor fee -->
+    <input type="hidden" id="fee">
+</div>
 
-            document.querySelectorAll('.channel-now-btn').forEach(button => {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
+<!-- 🔹 Move Confirmation Popup Here -->
+<div class="af-form-container" id="confirmation-popup" style="display: none;">
+    <h1>Confirm Your Appointment</h1>
+    <p><strong>Doctor:</strong> <span id="confirm-doctor"></span></p>
+    <p><strong>Specialty:</strong> <span id="confirm-specialty"></span></p>
+    <p><strong>Schedule:</strong> <span id="confirm-schedule"></span></p>
+    <p><strong>Patient Name:</strong> <span id="confirm-patient"></span></p>
+    <p><strong>Doctor's Fee:</strong> <span id="confirm-fee"></span></p>
 
-                    document.getElementById('doctor').value = this.getAttribute('data-doctor-name');
-                    document.getElementById('specialty').value = this.getAttribute('data-specialty');
+    <div class="af-button-container">
+        <button id="cancel-button" class="btn btn-danger">Cancel</button>
+        <button id="ok-button" class="btn btn-success">OK</button>
+    </div>
+</div>
 
-                    modal.style.display = 'block';
-                    overlay.style.display = 'block';
+<!-- OTP Verification Popup -->
+<div class="af-form-container" id="otp-verification-popup" style="display: none;">
+    <h1>Verify OTP</h1>
+    <p>A 6-digit OTP has been sent to <span id="otp-contact-number"></span></p>
 
-                    fetchAvailableSchedules(this.getAttribute('data-doctor-id'));
-                });
-            });
+    <label for="otp-input">Enter OTP:</label>
+    <input type="text" id="otp-input" required>
 
-            closeModal.addEventListener('click', function() {
-                modal.style.display = 'none';
-                overlay.style.display = 'none';
-            });
+    <div class="af-button-container">
+        <button id="otp-cancel-button" class="btn btn-danger">Cancel</button>
+        <button id="resend-otp-btn" class="btn btn-secondary" style="display: none;">Resend OTP</button>
 
-            function fetchAvailableSchedules(doctorId) {
-                fetch(`/get-doctor-schedules/${doctorId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        let scheduleDropdown = document.getElementById('schedule');
-                        scheduleDropdown.innerHTML = '<option value="">Select Date & Time</option>';
-                        data.forEach(schedule => {
-                            scheduleDropdown.innerHTML += `<option value="${schedule.id}">${schedule.date} - ${schedule.time}</option>`;
-                        });
-                    });
+        <button id="verify-otp-button" class="btn btn-success">Verify OTP</button>
+    </div>
+</div>
+<!-- Payment Selection Popup -->
+<div class="af-form-container" id="payment-selection-popup" style="display: none;">
+    <h1>Select Payment Method</h1>
+    <p>Please choose your preferred payment option.</p>
+
+    <div class="af-button-container">
+        <button id="pay-now-button" class="btn btn-success">Pay Now</button>
+        <button id="pay-counter-button" class="btn btn-primary">Pay at Counter</button>
+    </div>
+</div>
+<!-- Hidden Payment Form -->
+<form id="payment-form" method="POST" action="{{ route('appointments.process-payment') }}">
+    @csrf
+    <input type="hidden" name="payment_method" id="payment-method">
+    <input type="hidden" name="appointment_status" value="Online">
+</form>
+
+
+
+
+     <script>
+
+document.getElementById('nic').addEventListener('input', function () {
+    const nicPattern = /^[0-9]{9}[VXvx]?$/;
+    if (!nicPattern.test(this.value)) {
+        this.setCustomValidity('Enter a valid NIC (e.g., 123456789V or 200012345678)');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+
+         
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById('appointment-form-container');
+    const overlay = document.getElementById('overlay');
+    const closeModal = document.getElementById('close-btn');
+    const confirmationPopup = document.getElementById('confirmation-popup');
+    const confirmDoctor = document.getElementById('confirm-doctor');
+    const confirmSpecialty = document.getElementById('confirm-specialty');
+    const confirmSchedule = document.getElementById('confirm-schedule');
+    const confirmPatient = document.getElementById('confirm-patient');
+    const confirmFee = document.getElementById('confirm-fee');
+    const cancelBtn = document.getElementById('cancel-button');
+    const okBtn = document.getElementById('ok-button');
+    const verifyBtn = document.getElementById('verify-otp-button');
+    const resendOtp = document.getElementById('resend-otp-btn');
+    const payNowBtn = document.getElementById('pay-now-button');
+    const payCounterBtn = document.getElementById('pay-counter-button');
+
+
+    document.querySelectorAll('.channel-now-btn').forEach(button => {
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+
+            const doctorId = this.getAttribute('data-doctor-id');
+            document.getElementById('doctor_id').value = doctorId; 
+            document.getElementById('doctor').value = this.getAttribute('data-doctor-name');
+            document.getElementById('specialty').value = this.getAttribute('data-specialty');
+
+            modal.style.display = 'block';
+            overlay.style.display = 'block';
+
+            fetchAvailableSchedules(doctorId);
+            fetchDoctorFee(doctorId); // Fetch doctor's fee
+        });
+    });
+
+    closeModal.addEventListener('click', closeAllModals);
+    overlay.addEventListener('click', closeAllModals);
+    cancelBtn.addEventListener('click', closeAllModals);
+
+    document.getElementById('next-button').addEventListener('click', function (event) {
+        event.preventDefault();
+
+        const doctorName = document.getElementById('doctor').value;
+        const specialty = document.getElementById('specialty').value;
+        const scheduleDropdown = document.getElementById('schedule');
+        const schedule = scheduleDropdown.options[scheduleDropdown.selectedIndex].text;
+        const patientName = document.getElementById('patient_name').value;
+        const doctorFee = document.getElementById('fee').value || 'Not Available';
+
+        if (!scheduleDropdown.value) {
+            alert('Please select a schedule before proceeding.');
+            return;
+        }
+
+        confirmDoctor.textContent = doctorName;
+        confirmSpecialty.textContent = specialty;
+        confirmSchedule.textContent = schedule;
+        confirmPatient.textContent = patientName;
+        confirmFee.textContent = `Rs. ${doctorFee}`;
+
+        modal.style.display = 'none';
+        confirmationPopup.style.display = 'block';
+    });
+
+    okBtn.addEventListener('click', function () {
+    const specialty = document.getElementById('specialty').value;
+    const doctor = document.getElementById('doctor').value;
+    const schedule = document.getElementById('schedule').value;
+    const patientName = document.getElementById('patient_name').value;
+    const nic = document.getElementById('nic').value;
+    const contact = document.getElementById('contact').value;
+
+    if (!specialty || !doctor || !schedule || !patientName || !nic || !contact) {
+        alert("Please fill in all the required fields.");
+        return;
+    }
+
+    const doctorId = document.getElementById('doctor_id').value;
+
+    fetch('/send-otp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ 
+            specialty: specialty,
+            doctor: doctor,
+            doctor_id: doctorId, 
+            schedule: schedule,
+            patient_name: patientName,
+            nic: nic,
+            contact: contact
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById('otp-contact-number').textContent = contact;
+
+            // Hide confirmation popup & show OTP verification popup
+            document.getElementById('confirmation-popup').style.display = 'none';
+            document.getElementById('otp-verification-popup').style.display = 'block';
+        } else {
+            alert(data.message || "Failed to send OTP. Please try again.");
+        }
+    })
+    .catch(error => {
+        console.error("Error sending OTP:", error);
+        alert("An error occurred. Please try again.");
+    });
+});
+
+
+document.getElementById('verify-otp-button').addEventListener('click', function () {
+    const otp = document.getElementById('otp-input').value;
+
+    if (!otp) {
+        alert("Please enter the OTP.");
+        return;
+    }
+
+    const appointmentData = {
+        doctor_id: document.querySelector('.channel-now-btn[data-doctor-id]').getAttribute('data-doctor-id'),
+        doctor: document.getElementById('doctor').value,
+        specialty: document.getElementById('specialty').value,
+        schedule: document.getElementById('schedule').value,
+        patient_name: document.getElementById('patient_name').value,
+        nic: document.getElementById('nic').value,
+        contact: document.getElementById('contact').value
+    };
+
+    fetch('/verify-otp', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify({ otp: otp, appointment_data: appointmentData })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.verified) {
+            alert("OTP verified successfully!");
+            document.getElementById('otp-verification-popup').style.display = 'none';
+            document.getElementById('payment-selection-popup').style.display = 'block';
+        } else {
+            alert(data.message || "Invalid OTP. Please try again.");
+            if (data.expired) {
+                alert("OTP has expired. Please request a new one.");
+                document.getElementById('resend-otp-btn').style.display = 'block';
             }
+        }
+    })
+    .catch(error => {
+        console.error("Error verifying OTP:", error);
+        alert("An error occurred. Please try again.");
+    });
+});
+
+
+resendOtp.addEventListener('click', function () {
+
+    document.getElementById('resend-otp-btn').addEventListener('click', function () {
+    const contact = document.getElementById('contact').value;
+
+    fetch('/send-otp', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+    },
+    body: JSON.stringify({ 
+        specialty: specialty,
+        doctor: doctor,
+        doctor_id: doctorId,
+        schedule: schedule,
+        patient_name: patientName,
+        nic: nic,
+        contact: contact
+    })
+})
+
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("New OTP sent successfully.");
+            document.getElementById('resend-otp-btn').style.display = 'none'; // Hide resend button
+        } else {
+            alert("Failed to resend OTP. Try again.");
+        }
+    })
+    .catch(error => {
+        console.error("Error resending OTP:", error);
+        alert("An error occurred. Please try again.");
+    });
+});
+
+});
+
+        payNowBtn.addEventListener('click', function () {
+            window.location.href = `/payment-path`; // Update this path as needed
         });
 
-        
-    </script>
+        payCounterBtn.addEventListener('click', function () {
+    const token = document.querySelector('meta[name="csrf-token"]').content;
+
+    fetch('/appointments/process-payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': token
+        },
+        body: JSON.stringify({
+            payment_method: 'Pending',
+            appointment_status: 'Online'
+        })
+    })
+    .then(response => {
+        // Handle non-200 responses gracefully
+        if (!response.ok) {
+            return response.json().then(err => {
+                throw err;
+            });
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            // ✅ Show success in the same popup
+            document.getElementById('payment-selection-popup').innerHTML = `
+                <h1 class="text-success">🎉 Appointment Confirmed!</h1>
+                <p><strong>Appointment ID:</strong> ${data.appointment_id}</p>
+                <p>Your appointment has been successfully booked. Please arrive 15 minutes early.</p>
+                <div class="af-button-container">
+                    <button class="btn btn-primary" onclick="location.reload()">OK</button>
+                </div>
+            `;
+        }
+    })
+    .catch(err => {
+        console.error("Appointment Booking Error:", err);
+
+        // ❌ Show session expiration or general error message in the same popup
+        document.getElementById('payment-selection-popup').innerHTML = `
+            <h1 class="text-danger">❌ Error</h1>
+            <p>${err.message || 'Something went wrong. Please try again.'}</p>
+            <div class="af-button-container">
+                <button class="btn btn-secondary" onclick="location.reload()">Try Again</button>
+            </div>
+        `;
+    });
+});
+
+
+
+
+
+    function fetchAvailableSchedules(doctorId) {
+        fetch(`/get-doctor-schedules/${doctorId}`)
+            .then(response => response.json())
+            .then(data => {
+                const scheduleDropdown = document.getElementById('schedule');
+                scheduleDropdown.innerHTML = '<option value="">Select Date & Time</option>';
+
+                data.forEach(schedule => {
+                    const formattedDate = new Date(schedule.date).toLocaleDateString('en-US', {
+                        year: 'numeric', month: 'short', day: '2-digit'
+                    });
+                    const startTime = formatTime(schedule.start_time);
+                    const endTime = formatTime(schedule.end_time);
+
+                    const combinedValue = `${formattedDate} ${startTime} - ${endTime}`;
+                    const combinedKey = `${schedule.date},${schedule.start_time},${schedule.end_time}`;
+
+                    scheduleDropdown.innerHTML += `<option value="${combinedKey}">${combinedValue}</option>`;
+                });
+            })
+            .catch(error => console.error("Error fetching schedules:", error));
+    }
+
+    function fetchDoctorFee(doctorId) {
+    fetch(`/get-doctor-fee/${doctorId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Failed to fetch doctor's fee");
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Fetched Fee Data:", data); // Debugging log
+            if (data && data.fee) {
+                document.getElementById('fee').value = data.fee;
+            } else {
+                document.getElementById('fee').value = 'Not Available';
+            }
+        })
+        .catch(error => {
+            console.error("Error fetching fee:", error);
+            document.getElementById('fee').value = 'Not Available';
+        });
+}
+
+    function formatTime(timeString) {
+        const [hours, minutes] = timeString.split(':');
+        const period = hours >= 12 ? 'PM' : 'AM';
+        const formattedHours = hours % 12 || 12;
+        return `${formattedHours}:${minutes} ${period}`;
+    }
+
+    function closeAllModals() {
+        modal.style.display = 'none';
+        overlay.style.display = 'none';
+        confirmationPopup.style.display = 'none';
+    }
+});
+
+</script>
 
 </body>
 </html>

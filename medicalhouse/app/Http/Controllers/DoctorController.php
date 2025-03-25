@@ -153,5 +153,17 @@ public function getDoctorsBySpecialty(Request $request)
             'fee' => $doctor->Fee
         ]);
     }
+
+    public function getdocfeebyID($doctorId)
+{
+    $doctor = Doctor::where('Doc_id', $doctorId)->first();
+
+    if (!$doctor) {
+        return response()->json(['error' => 'Doctor not found'], 404);
+    }
+
+    return response()->json(['fee' => $doctor->Fee ?? 'Not Available']);
+}
+
     
 }

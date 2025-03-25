@@ -173,18 +173,21 @@ class DoctorScheduleController extends Controller
     }
 
 
-
+  
     public function getSchedules($doctorId)
     {
-        // Fetch schedules for the given doctor
-        $schedules = DoctorSchedule::where('doctor_id', $doctorId)->get(['id', 'date', 'time']);
+        $today = now()->startOfDay();
+        $twoWeeksLater = now()->addWeeks(2)->endOfDay();
 
-        // Check if there are schedules available
-        if ($schedules->isEmpty()) {
-            return response()->json(['message' => 'No schedules available'], 404);
-        }
+        $schedules = DoctorSchedule::where('Doc_id', $doctorId)
+            ->whereBetween('date', [$today, $twoWeeksLater])
+            ->orderBy('date')
+            ->orderBy('start_time')
+            ->get(['date', 'start_time', 'end_time']);
 
         return response()->json($schedules);
     }
+    
+
 }
 
