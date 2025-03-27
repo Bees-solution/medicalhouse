@@ -56,17 +56,19 @@ class AdminAppointmentViewController extends Controller
     }
 
     public function upcoming($doctor_id)
-{
-    $today = Carbon::today();
-
-    // Fetch upcoming appointments (appointments scheduled after today)
-    $upcomingAppointments = Appointment::where('doctor_id', $doctor_id)
-        ->whereDate('appointment_date_time', '>', $today) // Only future appointments
-        ->orderBy('appointment_date_time', 'asc')
-        ->get();
-
-    $doctor = Doctor::findOrFail($doctor_id);
-
-    return view('Doctor.Aupview', compact('doctor', 'upcomingAppointments'));
-}
+    {
+        $today = Carbon::today();
+    
+        // Fetch doctor details
+        $doctor = Doctor::findOrFail($doctor_id);
+    
+        // Fetch upcoming appointments (appointments scheduled after today)
+        $upcomingAppointments = Appointment::where('doctor_id', $doctor_id)
+            ->whereDate('appointment_date_time', '>', $today) // Only future appointments
+            ->orderBy('appointment_date_time', 'asc')
+            ->get();
+    
+        return view('Doctor.Aupview', compact('doctor', 'upcomingAppointments'));
+    }
+    
 }

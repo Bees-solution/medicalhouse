@@ -11,7 +11,11 @@
     <nav class="mt-6">
         <a href="{{ url('/admin/dashboard') }}" class="block py-2 px-4 rounded-lg hover:bg-blue-700">Dashboard</a>
         <a href="#" class="block py-2 px-4 rounded-lg hover:bg-blue-700">Users</a>
+        <a href="{{ url('/doctor') }}" class="block py-2 px-4 rounded-lg hover:bg-blue-700">Manage Doctors</a>
         <a href="{{ url('/lab') }}" class="block py-2 px-4 rounded-lg hover:bg-blue-700">Lab Tests</a>
         <a href="#" class="block py-2 px-4 rounded-lg hover:bg-blue-700">Settings</a>
+        <a href="{{ route('admin.index') }}" class="block py-2 px-4 rounded-lg hover:bg-blue-700">Doctor Schedules</a>
+
+
     </nav>
 </aside>

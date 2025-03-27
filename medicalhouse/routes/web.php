@@ -30,8 +30,7 @@ Route::delete('/schedules/delete-old', [DoctorScheduleController::class, 'delete
 //admin appointment view 
 Route::get('/adminview', [AdminAppointmentViewController::class, 'index'])->name('admin.index');
 Route::get('/admin/doctor/{doc_id}/appointments', [AdminAppointmentViewController::class, 'showDoctorAppointments'])->name('doctor.appointments');
-
-
+Route::get('/admin/doctor/{doctor_id}/upcoming-appointments', [AdminAppointmentViewController::class, 'upcoming'])->name('doctor.upcomingAppointments');
 
 Route::get('/', [AppointmentController::class, 'homepage'])->name('homepage');
 // Appointment  online pay later
