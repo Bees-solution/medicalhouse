@@ -618,9 +618,50 @@ resendOtp.addEventListener('click', function () {
 
 });
 
-        payNowBtn.addEventListener('click', function () {
-            window.location.href = `/payment-path`; // Update this path as needed
-        });
+payNowBtn.addEventListener('click', function () {
+    const scheduleParts = document.getElementById('schedule').value.split(',');
+    const appointmentDate = scheduleParts[0];
+    const startTime = scheduleParts[1];
+
+    const fee = document.getElementById('fee').value;
+
+    if (!fee || isNaN(fee)) {
+        alert("Doctor's fee is not available. Please try again later.");
+        return;
+    }
+
+    const payload = {
+        doctor_id: document.getElementById('doctor_id').value,
+        doctor: document.getElementById('doctor').value,
+        specialty: document.getElementById('specialty').value,
+        schedule: `${appointmentDate},${startTime}`,
+        patient_name: document.getElementById('patient_name').value,
+        contact_no: document.getElementById('contact').value,
+        amount: fee
+    };
+
+    fetch('/payhere/initiate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+        },
+        body: JSON.stringify(payload)
+    })
+    .then(response => response.text())
+    .then(html => {
+        // ✅ Open PayHere form safely in a new tab
+        const payhereWindow = window.open('', '_blank');
+        payhereWindow.document.open();
+        payhereWindow.document.write(html);
+        payhereWindow.document.close();
+    })
+    .catch(error => {
+        console.error("Error initiating PayHere:", error);
+        alert("Something went wrong. Please try again.");
+    });
+});
+
 
         payCounterBtn.addEventListener('click', function () {
     const token = document.querySelector('meta[name="csrf-token"]').content;

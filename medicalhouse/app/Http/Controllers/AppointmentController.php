@@ -13,11 +13,21 @@ use Illuminate\Support\Str;
 use App\Models\Payment; 
 use App\Models\Bill;
 use Barryvdh\DomPDF\Facade\Pdf;
+use App\Services\AppointmentService;
+
 
 
 
 class AppointmentController extends Controller
 {
+
+    protected $appointmentService;
+
+public function __construct(AppointmentService $appointmentService)
+{
+    $this->appointmentService = $appointmentService;
+}
+
     public function create()
     {
         $specialties = Doctor::select('Specialty')->distinct()->pluck('Specialty');
@@ -43,7 +53,7 @@ class AppointmentController extends Controller
     /**
      * ✅ Generate Safe Appointment Number (Prevents Race Conditions)
      */
-    private function generateAppointmentNumber($doctorId, $appointmentDate, $startTime)
+    /*private function generateAppointmentNumber($doctorId, $appointmentDate, $startTime)
     {
         // Start Transaction
         DB::beginTransaction();
@@ -70,7 +80,7 @@ class AppointmentController extends Controller
             Log::error('Error generating appointment number:', ['error' => $e->getMessage()]);
             return null;
         }
-    }
+    }*/
 
     /**
      * ✅ Process Online Appointments (Pay Now & Pay At Counter)
@@ -111,7 +121,7 @@ class AppointmentController extends Controller
             }
 
             // Generate unique appointment number
-            $appointmentNo = $this->generateAppointmentNumber($doctorId, $appointmentDate, $startTime);
+            $appointmentNo = $this->appointmentService->generateAppointmentNumber($doctorId, $appointmentDate, $startTime);
             if (!$appointmentNo) {
                 return response()->json([
                     'success' => false,
@@ -145,7 +155,13 @@ class AppointmentController extends Controller
             DB::commit();
 
             // ✅ Send SMS Notification
-            $this->sendAppointmentConfirmationSMS($patient->name, $doctor->name, $appointment, $paymentStatus);
+            $this->appointmentService->sendAppointmentConfirmationSMS(
+                $appointmentData['patient_name'], 
+                $doctor->name, 
+                $appointment, 
+                $paymentStatus
+            );
+            
 
             // Clear session
             Session::forget('verified_appointment');
@@ -189,7 +205,7 @@ class AppointmentController extends Controller
         }
 
         // ✅ Generate appointment number
-        $appointmentNo = $this->generateAppointmentNumber($doctorId, $appointmentDate, $startTime);
+        $appointmentNo = $this->appointmentService->generateAppointmentNumber($doctorId, $appointmentDate, $startTime);
         if (!$appointmentNo) {
             return response()->json(['success' => false, 'message' => 'Could not assign appointment number. Please try again.']);
         }
@@ -214,13 +230,14 @@ class AppointmentController extends Controller
 
         DB::commit();
 
-        // ✅ Send SMS Notification
-        $this->sendAppointmentConfirmationSMS(
-            $appointmentData['patient_name'], 
-            $doctor->name, 
-            $appointment, 
-            $paymentStatus
-        );
+ // ✅ Send SMS Notification
+ $this->appointmentService->sendAppointmentConfirmationSMS(
+    $appointmentData['patient_name'], 
+    $doctor->name, 
+    $appointment, 
+    $paymentStatus
+);
+
 
         return response()->json([
             'success' => true,
@@ -238,7 +255,7 @@ class AppointmentController extends Controller
     /**
      * ✅ Send SMS Confirmation
      */
-    private function sendAppointmentConfirmationSMS($patientName, $doctorName, $appointment, $paymentStatus)
+    /*private function sendAppointmentConfirmationSMS($patientName, $doctorName, $appointment, $paymentStatus)
     {
         $formattedPhone = $appointment->contact_no;
         if (preg_match('/^0\d{9}$/', $formattedPhone)) {
@@ -257,19 +274,19 @@ class AppointmentController extends Controller
 
         app('App\Services\NotifyService')->sendAppointmentMessage($formattedPhone, $message);
 
-    }
+    }*/
 
     /**
      * ✅ Show Appointment Success Page
      */
-   /* public function appointmentSuccess($appointmentId)
+    public function appointmentSuccess($appointmentId)
     {
         $appointment = Appointment::with('doctor')->find($appointmentId);
         if (!$appointment) {
             return redirect()->route('appointments.create')->with('error', 'Appointment not found.');
         }
         return view('appointments.success', compact('appointment'));
-    }*/
+    }
 
     public function getDoctorFee(Request $request)
 {
@@ -324,8 +341,12 @@ public function processPayNowAppointment(Request $request)
         $appointmentDate = $scheduleDetails[0];
         $startTime = $scheduleDetails[1];
 
+        $doctorId = $doctor->Doc_id; // ✅ Get ID from the $doctor you already retrieved
+
+
+
         // ✅ Generate appointment number
-        $appointmentNo = $this->generateAppointmentNumber($doctor->Doc_id, $appointmentDate, $startTime);
+        $appointmentNo = $this->appointmentService->generateAppointmentNumber($doctorId, $appointmentDate, $startTime);
         if (!$appointmentNo) {
             Log::error('Failed to generate appointment number.');
             return response()->json(['success' => false, 'message' => 'Failed to assign appointment number.']);

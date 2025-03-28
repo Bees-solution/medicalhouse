@@ -8,6 +8,7 @@ use App\Http\Controllers\DoctorScheduleController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\OTPController;
 use App\Http\Controllers\LabController;
+use App\Http\Controllers\PaymentController;
 
 Route::resource('doctor', DoctorController::class);
 
@@ -80,6 +81,17 @@ Route::get('/get-doctor-fee', [DoctorController::class, 'getDoctorFee']);
 Route::post('/process-pay-now', [AppointmentController::class, 'processPayNowAppointment']);
 Route::get('/download-bill/{billNo}', [AppointmentController::class, 'downloadBill']);
 
+//online payhere
+Route::post('/payhere/initiate', [PaymentController::class, 'initiatePayNow'])->name('payhere.initiate');
+
+Route::get('/thank-you', function () {
+    return view('payhere.thankyou');
+})->name('thank.you');
+
+Route::get('/payment-cancelled', function () {
+    return view('payhere.cancelled');
+})->name('payment.cancelled');
+
 
 
 Route::get('/aboutus', function () {
@@ -111,3 +123,8 @@ Route::delete('/lab/{labTest}', [LabController::class, 'destroy'])->name('lab.de
 Route::get('/get-doctor-schedules/{doctorId}', [DoctorScheduleController::class, 'getSchedules']);
 
 Route::get('/get-doctor-fee/{doctorId}', [DoctorController::class, 'getdocfeebyID']);
+
+// pay here test
+Route::get('/payhere-test', function () {
+    return view('payhere-test');
+});

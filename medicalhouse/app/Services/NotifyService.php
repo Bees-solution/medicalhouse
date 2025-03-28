@@ -7,13 +7,21 @@ use GuzzleHttp\Client;
 class NotifyService
 {
     protected $client;
+    protected $userId;
     protected $apiKey;
+    protected $senderId;
 
     public function __construct()
     {
         $this->client = new Client();
-        $this->apiKey = env('NOTIFYLK_API_KEY');
+
+        // ✅ Use config() not env()
+        $this->userId = config('services.notifylk.user_id');
+        $this->apiKey = config('services.notifylk.api_key');
+        $this->senderId = config('services.notifylk.sender_id', 'NotifyDEMO');
     }
+
+    
 
     // ✅ Send OTP (For Authentication)
     public function sendOTP($to, $otp)
@@ -26,9 +34,9 @@ class NotifyService
         try {
             $response = $this->client->post($url, [
                 'form_params' => [
-                    'user_id' => env('NOTIFYLK_USER_ID'),
+                    'user_id' => $this->userId,
                     'api_key' => $this->apiKey,
-                    'sender_id' => env('NOTIFYLK_SENDER_ID', 'NotifyDEMO'), // Optional
+                    'sender_id' => $this->senderId,
                     'to' => $to,
                     'message' => "Your OTP is: $otp",
                 ],
@@ -57,9 +65,9 @@ class NotifyService
         try {
             $response = $this->client->post($url, [
                 'form_params' => [
-                    'user_id' => env('NOTIFYLK_USER_ID'),
+                    'user_id' => $this->userId,
                     'api_key' => $this->apiKey,
-                    'sender_id' => env('NOTIFYLK_SENDER_ID', 'NotifyDEMO'), // Optional
+                    'sender_id' => $this->senderId,
                     'to' => $to,
                     'message' => $appointmentDetails, // Send exact message provided
                 ],
